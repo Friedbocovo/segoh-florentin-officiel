@@ -1,0 +1,42 @@
+{
+  "/a-propos": {
+    "title": "À propos — Couronne & Toque",
+    "description": "Parcours, valeurs et philosophie : un profil qui unit l’art scénique des concours d’élégance et la gastronomie d’auteur."
+  },
+  "/coaching": {
+    "title": "Coaching Miss & Mister — Couronne & Toque",
+    "description": "Préparation complète aux concours Miss & Mister : posture, défilé, prise de parole, entretien jury et image. Méthode en 4 étapes."
+  },
+  "/jury": {
+    "title": "Membre de jury de concours — Couronne & Toque",
+    "description": "Déontologie, critères d’évaluation publics et historique des concours d’élégance arbitrés."
+  },
+  "/gastronomie": {
+    "title": "Chef cuisinier & dîners privés — Couronne & Toque",
+    "description": "Cuisine d’auteur, spécialités, dîners privés et réceptions sur mesure. Demandez votre devis culinaire."
+  },
+  "/mes-concours": {
+    "title": "Mes concours coachés — Couronne & Toque",
+    "description": "Catalogue des concours Miss & Mister accompagnés : éditions, candidats coachés et titres obtenus."
+  },
+  "/galerie": {
+    "title": "Galerie photos & vidéos — Couronne & Toque",
+    "description": "Coulisses des concours, séances de coaching, jurys et créations culinaires en images."
+  },
+  "/temoignages": {
+    "title": "Témoignages — Couronne & Toque",
+    "description": "Les retours des candidates, candidats, comités d’organisation et hôtes de dîners."
+  },
+  "/actualites": {
+    "title": "Actualités & articles — Couronne & Toque",
+    "description": "Conseils de coaching, coulisses des concours et réflexions gastronomiques."
+  },
+  "/contact": {
+    "title": "Contact — Couronne & Toque",
+    "description": "Coaching, invitation en jury, prestation culinaire ou partenariat : envoyez votre demande."
+  },
+  "/mentions-legales": {
+    "title": "Mentions légales & RGPD — Couronne & Toque",
+    "description": "Informations légales et politique de confidentialité du site Couronne & Toque."
+  }
+}
