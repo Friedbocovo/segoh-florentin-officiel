@@ -11,7 +11,7 @@ import type { SiteSection } from '@/types';
 
 export type SectionField = 'eyebrow' | 'title' | 'content' | 'image' | 'button';
 
-export type ListItemField = { name: string; label: string; multiline?: boolean; short?: boolean };
+export type ListItemField = { name: string; label: string; multiline?: boolean; short?: boolean; image?: boolean };
 
 export type MetaFieldDef =
   | { key: string; type: 'text' | 'textarea'; label: string; placeholder?: string }
@@ -164,6 +164,7 @@ export const PAGE_REGISTRY: PageDef[] = [
               { name: 'kicker', label: 'Petite ligne' },
               { name: 'title', label: 'Titre' },
               { name: 'desc', label: 'Texte', multiline: true },
+              { name: 'image', label: 'Photo de la carte', image: true },
             ],
           },
         ],

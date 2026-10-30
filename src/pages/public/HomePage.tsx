@@ -47,7 +47,8 @@ export default function HomePage({
     ? ((stats.meta.stats as Item[] | undefined) ?? []).filter((st) => st?.label && st?.value)
     : [];
 
-  // Liens et visuels fixes des trois métiers (les textes viennent de l'admin)
+  // Liens fixes des trois métiers ; textes et photos viennent de l'admin
+  // (à défaut de photo, une image de la médiathèque de la bonne catégorie)
   const poles = [
     { path: '/coaching', icon: Crown, image: pickImage(media, ['coaching', 'concours']) },
     { path: '/jury', icon: Award, image: pickImage(media, ['jury']) },
@@ -153,7 +154,7 @@ export default function HomePage({
                 role="button"
                 tabIndex={0}
               >
-                <Picture src={pole.image} alt={card.title || ''} tone="dark" />
+                <Picture src={card.image || pole.image} alt={card.title || ''} tone="dark" />
                 <span className="shade" />
                 <div className="feature-card-content">
                   {card.kicker && <span className="card-kicker"><Icon size={14} /> {card.kicker}</span>}

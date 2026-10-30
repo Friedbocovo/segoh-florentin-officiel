@@ -279,16 +279,29 @@ function MetaEditor({ def, value, onChange }: { def: MetaFieldDef; value: unknow
         <div key={index} className="meta-item-card">
           <div className="meta-item-fields">
             <span className="meta-item-index">{def.itemLabel} {index + 1}</span>
-            {def.item.map((field) => (
-              <label key={field.name} className="meta-field">
-                {field.label}
-                {field.multiline ? (
-                  <textarea rows={3} value={item[field.name] || ''} onChange={(e) => update(index, field.name, e.target.value)} />
-                ) : (
-                  <input value={item[field.name] || ''} onChange={(e) => update(index, field.name, e.target.value)} />
-                )}
-              </label>
-            ))}
+            {def.item.map((field) =>
+              field.image ? (
+                <CloudinaryUploader
+                  key={field.name}
+                  label={field.label}
+                  currentUrl={item[field.name] || null}
+                  mediaType="image"
+                  folder="mc-florentin/sections"
+                  accept="image/*"
+                  onChange={({ url }) => update(index, field.name, url)}
+                  onRemove={() => update(index, field.name, '')}
+                />
+              ) : (
+                <label key={field.name} className="meta-field">
+                  {field.label}
+                  {field.multiline ? (
+                    <textarea rows={3} value={item[field.name] || ''} onChange={(e) => update(index, field.name, e.target.value)} />
+                  ) : (
+                    <input value={item[field.name] || ''} onChange={(e) => update(index, field.name, e.target.value)} />
+                  )}
+                </label>
+              )
+            )}
           </div>
           {!def.fixedCount && (
             <button
