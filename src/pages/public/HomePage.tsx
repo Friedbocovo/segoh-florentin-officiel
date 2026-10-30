@@ -1,6 +1,10 @@
 import { ArrowUpRight, Award, Calendar, ChevronRight, Crown, Quote, Sparkles, Utensils } from 'lucide-react';
 import type { Article, Contest, MediaItem, SiteSection, SiteSettings, Testimonial } from '@/types';
-import { images } from '@/lib/supabase';
+import Picture from '@/components/common/Picture';
+import { SectionHead } from '@/components/common/SectionTitles';
+import { pickImage } from '@/lib/media';
+import { getSection } from '@/lib/pageSections';
+import { rich } from '@/lib/richText';
 
 interface HomePageProps {
   settings: SiteSettings;
@@ -13,6 +17,8 @@ interface HomePageProps {
   onOpenMedia: (item: MediaItem) => void;
 }
 
+type Item = Record<string, string>;
+
 export default function HomePage({
   settings,
   sections,
@@ -23,19 +29,30 @@ export default function HomePage({
   onNavigate,
   onOpenMedia,
 }: HomePageProps) {
-  const heroSection = sections.find((s) => s.section_key === 'hero');
-  const presentationSection = sections.find((s) => s.section_key === 'presentation');
-  const statsSection = sections.find((s) => s.section_key === 'stats');
-  const ctaSection = sections.find((s) => s.section_key === 'cta');
+  const sec = (key: string) => getSection(sections, 'home', key);
+  const hero = sec('hero');
+  const presentation = sec('presentation');
+  const features = sec('features');
+  const stats = sec('stats');
+  const contestsHead = sec('contests_head');
+  const galleryHead = sec('gallery_head');
+  const testimonialsHead = sec('testimonials_head');
+  const newsHead = sec('news_head');
+  const cta = sec('cta');
+  const quote = sec('quote');
 
-  // Chiffres clés configurables
-  const statsList: Array<{ label: string; value: string }> =
-    statsSection?.meta?.stats?.filter((st: any) => st?.label && st?.value) || [
-      { label: 'Concours coachés', value: `${contests.length}+` },
-      { label: 'Titres & écharpes remportés', value: '26' },
-      { label: 'Jurys arbitrés', value: '32' },
-      { label: 'Années d’expérience', value: '8 ans' },
-    ];
+  const pillars = (hero.meta.pillars as Item[] | undefined) ?? [];
+  const cards = (features.meta.cards as Item[] | undefined) ?? [];
+  const statsList = stats.is_published
+    ? ((stats.meta.stats as Item[] | undefined) ?? []).filter((st) => st?.label && st?.value)
+    : [];
+
+  // Liens et visuels fixes des trois métiers (les textes viennent de l'admin)
+  const poles = [
+    { path: '/coaching', icon: Crown, image: pickImage(media, ['coaching', 'concours']) },
+    { path: '/jury', icon: Award, image: pickImage(media, ['jury']) },
+    { path: '/gastronomie', icon: Utensils, image: pickImage(media, ['gastronomie']) },
+  ];
 
   // Concours mis en avant
   const featuredContests = contests.filter((c) => c.is_published && (c.is_featured || true)).slice(0, 3);
@@ -51,176 +68,142 @@ export default function HomePage({
 
   return (
     <main className="home-page">
-      {/* 3.1 HERO SECTION */}
-      <section className="hero wrap">
-        <div className="hero-copy">
-          <p className="kicker">
-            <span /> {heroSection?.eyebrow || settings.tagline}
-          </p>
-          <h1>
-            {heroSection?.title ? (
-              heroSection.title
-            ) : (
-              <>
-                Révéler<br />
-                <em>l’élégance,</em><br />
-                sur scène<br className="desktop-only" /> comme à table
-              </>
+      {/* 3.1 HERO SECTION — couverture éditoriale */}
+      <section className="hero">
+        <div className="hero-media" aria-hidden="true">
+          <Picture src={hero.image_url} alt="" tone="dark" />
+        </div>
+
+        <div className="hero-inner wrap">
+          <div className="hero-copy">
+            {hero.eyebrow && (
+              <p className="kicker">
+                <span /> {hero.eyebrow}
+              </p>
             )}
-          </h1>
-          <p className="hero-description">
-            {heroSection?.content ||
-              'J’accompagne celles et ceux qui veulent entrer dans la lumière avec justesse, prestance et vérité. Une même exigence, du premier regard à la dernière assiette.'}
-          </p>
+            <h1>{rich(hero.title, true)}</h1>
+            {hero.content && <p className="hero-description">{hero.content}</p>}
 
-          <div className="hero-pillars">
-            <span className="pillar-badge">
-              <Crown size={14} /> Coaching Miss & Mister
-            </span>
-            <span className="pillar-badge">
-              <Award size={14} /> Jury de Concours
-            </span>
-            <span className="pillar-badge">
-              <Utensils size={14} /> Chef Cuisinier
-            </span>
-          </div>
-
-          <div className="hero-actions">
-            <button
-              className="button button-dark"
-              onClick={() => onNavigate(heroSection?.button_url || '/a-propos')}
-            >
-              <span>{heroSection?.button_label || 'Découvrir mon parcours'}</span>
-              <ArrowUpRight size={16} />
-            </button>
-            <button
-              className="button button-light"
-              onClick={() => onNavigate(heroSection?.meta?.secondary_button_url || '/contact')}
-            >
-              <span>{heroSection?.meta?.secondary_button_label || 'Me contacter'}</span>
-            </button>
+            <div className="hero-actions">
+              {hero.button_label && (
+                <button className="button button-ivory" onClick={() => onNavigate(hero.button_url || '/a-propos')}>
+                  <span>{hero.button_label}</span>
+                  <ArrowUpRight size={16} />
+                </button>
+              )}
+              {String(hero.meta.secondary_button_label || '') && (
+                <button
+                  className="button button-ghost"
+                  onClick={() => onNavigate(String(hero.meta.secondary_button_url || '/contact'))}
+                >
+                  <span>{String(hero.meta.secondary_button_label)}</span>
+                </button>
+              )}
+            </div>
           </div>
         </div>
 
-        <div className="hero-image">
-          <img
-            src={heroSection?.image_url || images.portrait}
-            alt={settings.site_name}
-          />
-          <div className="vertical-note">COACH · JURY · CHEF</div>
-        </div>
+        <nav className="hero-pillars wrap" aria-label="Les trois métiers">
+          {poles.map((pole, index) => {
+            const Icon = pole.icon;
+            const text = pillars[index] ?? {};
+            return (
+              <button key={pole.path} className="pillar-badge" onClick={() => onNavigate(pole.path)}>
+                <span className="pillar-index">0{index + 1}</span>
+                <span className="pillar-icon"><Icon size={18} /></span>
+                <span className="pillar-text">
+                  <strong>{text.title}</strong>
+                  {text.desc && <small>{text.desc}</small>}
+                </span>
+                <ArrowUpRight className="pillar-arrow" size={16} />
+              </button>
+            );
+          })}
+        </nav>
       </section>
 
       {/* 3.2 PRÉSENTATION RAPIDE */}
-      {presentationSection && presentationSection.is_published && (
+      {presentation.is_published && (
         <section className="intro-strip wrap">
           <div className="line" />
           <div className="intro-text">
-            <p className="intro-quote">
-              Une présence qui s’affirme.<br />
-              <span>Une assiette qui se raconte.</span>
-            </p>
-            <p className="intro-body">{presentationSection.content}</p>
-            <button
-              className="text-link"
-              onClick={() => onNavigate(presentationSection.button_url || '/a-propos')}
-            >
-              <span>{presentationSection.button_label || 'En savoir plus sur mon parcours'}</span>
-              <ChevronRight size={16} />
-            </button>
+            <p className="intro-quote">{rich(presentation.title)}</p>
+            {presentation.content && <p className="intro-body">{presentation.content}</p>}
+            {presentation.button_label && (
+              <button className="text-link" onClick={() => onNavigate(presentation.button_url || '/a-propos')}>
+                <span>{presentation.button_label}</span>
+                <ChevronRight size={16} />
+              </button>
+            )}
           </div>
-          <span className="intro-index">01 — 04</span>
         </section>
       )}
 
       {/* 3.3 MES DOMAINES D'EXPERTISE */}
-      <section className="feature-grid wrap">
-        <div
-          className="feature-card card-1"
-          onClick={() => onNavigate('/coaching')}
-          role="button"
-          tabIndex={0}
-        >
-          <img src={images.stage} alt="Coaching Miss & Mister" />
-          <span className="shade" />
-          <div className="feature-card-content">
-            <span className="card-kicker"><Crown size={14} /> Pôle Coaching</span>
-            <h3>L’art de la scène</h3>
-            <p>Accompagnement d’exception : démarche, posture, éloquence et préparation mentale.</p>
-          </div>
-          <ArrowUpRight className="card-arrow" size={22} />
-        </div>
-
-        <div
-          className="feature-card card-2"
-          onClick={() => onNavigate('/jury')}
-          role="button"
-          tabIndex={0}
-        >
-          <img src={images.table} alt="Jury de concours" />
-          <span className="shade" />
-          <div className="feature-card-content">
-            <span className="card-kicker"><Award size={14} /> Pôle Jury</span>
-            <h3>L’exigence du regard</h3>
-            <p>Arbitrage impartial, évaluation attentive de la personnalité et déontologie rigoureuse.</p>
-          </div>
-          <ArrowUpRight className="card-arrow" size={22} />
-        </div>
-
-        <div
-          className="feature-card card-3"
-          onClick={() => onNavigate('/gastronomie')}
-          role="button"
-          tabIndex={0}
-        >
-          <img src={images.dessert} alt="Gastronomie d'auteur" />
-          <span className="shade" />
-          <div className="feature-card-content">
-            <span className="card-kicker"><Utensils size={14} /> Pôle Gastronomie</span>
-            <h3>La précision culinaire</h3>
-            <p>Créations gastronomiques sensibles, dîners privés d’exception et événements sur mesure.</p>
-          </div>
-          <ArrowUpRight className="card-arrow" size={22} />
-        </div>
-      </section>
+      {features.is_published && (
+        <section className="feature-grid wrap">
+          {poles.map((pole, index) => {
+            const Icon = pole.icon;
+            const card = cards[index] ?? {};
+            return (
+              <div
+                key={pole.path}
+                className={`feature-card card-${index + 1}`}
+                onClick={() => onNavigate(pole.path)}
+                role="button"
+                tabIndex={0}
+              >
+                <Picture src={pole.image} alt={card.title || ''} tone="dark" />
+                <span className="shade" />
+                <div className="feature-card-content">
+                  {card.kicker && <span className="card-kicker"><Icon size={14} /> {card.kicker}</span>}
+                  <h3>{card.title}</h3>
+                  {card.desc && <p>{card.desc}</p>}
+                </div>
+                <ArrowUpRight className="card-arrow" size={22} />
+              </div>
+            );
+          })}
+        </section>
+      )}
 
       {/* 3.4 CHIFFRES CLÉS VÉRIFIÉS */}
       {statsList.length > 0 && (
-        <section className="stats-section wrap">
-          <div className="stats-header">
-            <p className="kicker"><span /> Indicateurs professionnels vérifiés</p>
-            <h2>L’expérience en chiffres</h2>
-          </div>
-          <div className="stats-grid">
-            {statsList.map((st, i) => (
-              <div key={i} className="stat-card">
-                <strong>{st.value}</strong>
-                <span>{st.label}</span>
-              </div>
-            ))}
+        <section className="stats-section">
+          <div className="wrap">
+            <div className="stats-header">
+              {stats.eyebrow && <p className="kicker"><span /> {stats.eyebrow}<span /></p>}
+              <h2>{rich(stats.title)}</h2>
+            </div>
+            <div className="stats-grid" style={{ ['--stats-count' as string]: statsList.length }}>
+              {statsList.map((st, i) => {
+                // « 18+ » → 18 + suffixe doré ; « 8 ans » → 8 + « ans »
+                const match = st.value.trim().match(/^([\d\s.,]+)(.*)$/);
+                return (
+                  <div key={i} className="stat-card">
+                    <strong>
+                      {match ? match[1].trim() : st.value}
+                      {match && match[2] && <em>{match[2].trim()}</em>}
+                    </strong>
+                    <span>{st.label}</span>
+                  </div>
+                );
+              })}
+            </div>
           </div>
         </section>
       )}
 
       {/* 3.5 CONCOURS À LA UNE */}
-      {featuredContests.length > 0 && (
+      {featuredContests.length > 0 && contestsHead.is_published && (
         <section className="featured-contests wrap">
-          <div className="section-head">
-            <div>
-              <p className="kicker"><span /> Palmarès & Réalisations</p>
-              <h2>Concours coachés à la une</h2>
-            </div>
-            <button className="text-link" onClick={() => onNavigate('/mes-concours')}>
-              <span>Tous les concours</span>
-              <ChevronRight size={16} />
-            </button>
-          </div>
+          <SectionHead section={contestsHead} linkLabel="Tous les concours" onLink={() => onNavigate('/mes-concours')} />
 
           <div className="contests-grid">
             {featuredContests.map((c) => (
               <article key={c.id} className="contest-card" onClick={() => onNavigate(`/mes-concours/${c.slug}`)}>
                 <div className="contest-cover">
-                  <img src={c.cover_image || images.stage} alt={c.name} />
+                  <Picture src={c.cover_image} alt={c.name} />
                   <span className="contest-edition">{c.edition || c.year}</span>
                 </div>
                 <div className="contest-info">
@@ -246,18 +229,9 @@ export default function HomePage({
       )}
 
       {/* 3.6 RÉALISATIONS & GALERIE */}
-      {featuredMedia.length > 0 && (
+      {featuredMedia.length > 0 && galleryHead.is_published && (
         <section className="featured-gallery wrap">
-          <div className="section-head">
-            <div>
-              <p className="kicker"><span /> Captures & Coulisses</p>
-              <h2>Extraits de la galerie</h2>
-            </div>
-            <button className="text-link" onClick={() => onNavigate('/galerie')}>
-              <span>Explorer la galerie complète</span>
-              <ChevronRight size={16} />
-            </button>
-          </div>
+          <SectionHead section={galleryHead} linkLabel="Explorer la galerie complète" onLink={() => onNavigate('/galerie')} />
 
           <div className="gallery-preview-grid">
             {featuredMedia.map((item) => (
@@ -278,18 +252,9 @@ export default function HomePage({
       )}
 
       {/* 3.7 TÉMOIGNAGES APPROUVÉS */}
-      {approvedTestimonials.length > 0 && (
+      {approvedTestimonials.length > 0 && testimonialsHead.is_published && (
         <section className="home-testimonials wrap">
-          <div className="section-head">
-            <div>
-              <p className="kicker"><span /> Retours d’expérience</p>
-              <h2>Témoignages</h2>
-            </div>
-            <button className="text-link" onClick={() => onNavigate('/temoignages')}>
-              <span>Voir tous les avis</span>
-              <ChevronRight size={16} />
-            </button>
-          </div>
+          <SectionHead section={testimonialsHead} linkLabel="Voir tous les avis" onLink={() => onNavigate('/temoignages')} />
 
           <div className="testimonials-cards-grid">
             {approvedTestimonials.map((t) => (
@@ -310,18 +275,9 @@ export default function HomePage({
       )}
 
       {/* 3.8 ACTUALITÉS RÉCENTES */}
-      {recentArticles.length > 0 && (
+      {recentArticles.length > 0 && newsHead.is_published && (
         <section className="featured-news wrap">
-          <div className="section-head">
-            <div>
-              <p className="kicker"><span /> Journal & Réflexions</p>
-              <h2>Dernières actualités</h2>
-            </div>
-            <button className="text-link" onClick={() => onNavigate('/actualites')}>
-              <span>Toutes les actualités</span>
-              <ChevronRight size={16} />
-            </button>
-          </div>
+          <SectionHead section={newsHead} linkLabel="Toutes les actualités" onLink={() => onNavigate('/actualites')} />
 
           <div className="news-grid">
             {recentArticles.map((art) => (
@@ -331,7 +287,7 @@ export default function HomePage({
                 onClick={() => onNavigate(`/actualites/${art.slug}`)}
               >
                 <div className="news-thumb">
-                  <img src={art.cover_image || images.portrait} alt={art.title} />
+                  <Picture src={art.cover_image} alt={art.title} />
                   <span className="news-cat">{art.category}</span>
                 </div>
                 <div className="news-card-body">
@@ -351,31 +307,34 @@ export default function HomePage({
       )}
 
       {/* 3.9 APPEL À L'ACTION */}
-      <section className="statement wrap">
-        <div>
-          <p className="kicker"><span /> {ctaSection?.eyebrow || 'La signature'}</p>
-          <h2>{ctaSection?.title || <>La distinction<br /><em>ne se joue pas.</em></>}</h2>
-        </div>
-        <div>
-          <p>
-            {ctaSection?.content ||
-              'Elle se prépare, se cultive et se partage. Couronne & Toque compose des accompagnements singuliers pour les personnalités qui veulent laisser une impression juste.'}
-          </p>
-          <button className="button button-dark" onClick={() => onNavigate(ctaSection?.button_url || '/contact')}>
-            <span>{ctaSection?.button_label || 'Parlons de votre projet'}</span>
-            <ArrowUpRight size={16} />
-          </button>
-        </div>
-      </section>
+      {cta.is_published && (
+        <section className="statement wrap">
+          <div>
+            {cta.eyebrow && <p className="kicker"><span /> {cta.eyebrow}</p>}
+            <h2>{rich(cta.title)}</h2>
+          </div>
+          <div>
+            {cta.content && <p>{cta.content}</p>}
+            {cta.button_label && (
+              <button className="button button-dark" onClick={() => onNavigate(cta.button_url || '/contact')}>
+                <span>{cta.button_label}</span>
+                <ArrowUpRight size={16} />
+              </button>
+            )}
+          </div>
+        </section>
+      )}
 
       {/* CITATION EMBLÉMATIQUE */}
-      <section className="quote-section">
-        <div className="wrap quote-inner">
-          <Quote size={32} />
-          <blockquote>« L’élégance, c’est lorsque l’intérieur est aussi beau que l’extérieur. »</blockquote>
-          <p>— Gabrielle Chanel</p>
-        </div>
-      </section>
+      {quote.is_published && quote.title && (
+        <section className="quote-section">
+          <div className="wrap quote-inner">
+            <Quote size={32} />
+            <blockquote>{rich(quote.title)}</blockquote>
+            {quote.eyebrow && <p>— {quote.eyebrow}</p>}
+          </div>
+        </section>
+      )}
     </main>
   );
 }

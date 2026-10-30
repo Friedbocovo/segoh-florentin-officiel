@@ -5,7 +5,6 @@ import {
   Cloud,
   ExternalLink,
   Image as ImageIcon,
-  Link as LinkIcon,
   Loader2,
   Trash2,
   UploadCloud,
@@ -37,7 +36,10 @@ export interface CloudinaryUploaderProps {
   settings?: SiteSettings | null;
   accept?: string;
   helpText?: string;
-  allowManualUrl?: boolean;
+  /** Taille maximale acceptée, en Mo */
+  maxSizeMb?: number;
+  /** Prévenu au début et à la fin d'un envoi (ex. pour bloquer un formulaire) */
+  onUploadingChange?: (uploading: boolean) => void;
 }
 
 export default function CloudinaryUploader({
@@ -47,19 +49,18 @@ export default function CloudinaryUploader({
   mediaType = 'image',
   onChange,
   onRemove,
-  folder = 'couronne-toque',
+  folder = 'mc-florentin',
   settings,
   accept = 'image/*,video/*',
   helpText,
-  allowManualUrl = true,
+  maxSizeMb = 25,
+  onUploadingChange,
 }: CloudinaryUploaderProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [isDragging, setIsDragging] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
-  const [showManualInput, setShowManualInput] = useState(false);
-  const [manualUrl, setManualUrl] = useState(currentUrl || '');
 
   const config = getCloudinaryConfig(settings);
 
@@ -68,7 +69,23 @@ export default function CloudinaryUploader({
     if (!file) return;
 
     setErrorMsg(null);
+
+    // Seuls les fichiers du type attendu (image ou vidéo) sont acceptés
+    const acceptsImage = accept.includes('image');
+    const acceptsVideo = accept.includes('video');
+    const isImage = file.type.startsWith('image/');
+    const isVideo = file.type.startsWith('video/');
+    if (!((acceptsImage && isImage) || (acceptsVideo && isVideo))) {
+      setErrorMsg(acceptsVideo && !acceptsImage ? 'Choisissez un fichier vidéo.' : 'Choisissez un fichier image (JPG, PNG, WebP…).');
+      return;
+    }
+    if (file.size > maxSizeMb * 1024 * 1024) {
+      setErrorMsg(`Fichier trop lourd : ${maxSizeMb} Mo maximum.`);
+      return;
+    }
+
     setIsUploading(true);
+    onUploadingChange?.(true);
     setUploadProgress(0);
 
     try {
@@ -91,7 +108,6 @@ export default function CloudinaryUploader({
         height: res.height,
         originalFilename: res.original_filename || file.name,
       });
-      setManualUrl(res.secure_url);
     } catch (err: any) {
       console.error('Erreur Cloudinary:', err);
       setErrorMsg(
@@ -100,6 +116,7 @@ export default function CloudinaryUploader({
       );
     } finally {
       setIsUploading(false);
+      onUploadingChange?.(false);
       setUploadProgress(0);
       if (fileInputRef.current) {
         fileInputRef.current.value = '';
@@ -130,23 +147,6 @@ export default function CloudinaryUploader({
     setIsDragging(false);
     const file = e.dataTransfer.files?.[0];
     if (file) void handleFile(file);
-  }
-
-  function handleApplyManualUrl(e: React.FormEvent) {
-    e.preventDefault();
-    if (!manualUrl.trim()) return;
-    const isVid =
-      manualUrl.endsWith('.mp4') ||
-      manualUrl.endsWith('.webm') ||
-      manualUrl.includes('youtube.com') ||
-      manualUrl.includes('vimeo.com');
-
-    onChange({
-      url: manualUrl.trim(),
-      thumbnailUrl: manualUrl.trim(),
-      mediaType: isVid ? 'video' : 'image',
-    });
-    setShowManualInput(false);
   }
 
   const hasMedia = Boolean(currentUrl && currentUrl.trim().length > 0);
@@ -278,8 +278,13 @@ export default function CloudinaryUploader({
               <strong>Cliquez pour choisir un fichier</strong> ou glissez-déposez ici
             </p>
             <p className="dropzone-secondary">
-              Images ou vidéos (JPEG, PNG, WEBP, MP4, WebM) · Cloud :{' '}
-              <strong className="font-mono">{config.cloudName}</strong>
+              {accept.includes('video') && accept.includes('image')
+                ? 'Images ou vidéos (JPG, PNG, WebP, MP4, WebM)'
+                : accept.includes('video')
+                ? 'Vidéos (MP4, WebM)'
+                : 'Images (JPG, PNG, WebP)'}
+              {' · '}
+              {maxSizeMb} Mo maximum
             </p>
           </div>
         </div>
@@ -290,43 +295,6 @@ export default function CloudinaryUploader({
         <div className="cloudinary-error-box">
           <AlertCircle size={16} />
           <span>{errorMsg}</span>
-        </div>
-      )}
-
-      {/* BASULE POUR URL MANUELLE */}
-      {allowManualUrl && !isUploading && (
-        <div className="cloudinary-footer-tools">
-          <button
-            type="button"
-            className="toggle-manual-btn"
-            onClick={() => setShowManualInput(!showManualInput)}
-          >
-            <LinkIcon size={12} />
-            <span>
-              {showManualInput
-                ? 'Masquer la saisie d’URL'
-                : 'Ou coller une URL existante'}
-            </span>
-          </button>
-
-          {showManualInput && (
-            <div className="manual-url-form mt-2">
-              <input
-                type="url"
-                value={manualUrl}
-                onChange={(e) => setManualUrl(e.target.value)}
-                placeholder="https://res.cloudinary.com/... ou https://..."
-                className="manual-url-input"
-              />
-              <button
-                type="button"
-                className="button button-dark btn-apply-manual"
-                onClick={handleApplyManualUrl}
-              >
-                Appliquer
-              </button>
-            </div>
-          )}
         </div>
       )}
 

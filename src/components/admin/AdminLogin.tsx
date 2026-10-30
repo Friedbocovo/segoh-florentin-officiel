@@ -2,7 +2,9 @@ import { FormEvent, useState } from 'react';
 import { ArrowUpRight, Crown, LoaderCircle, Lock, Mail, ShieldAlert } from 'lucide-react';
 import { DataService, isSupabaseConfigured, supabase } from '@/lib/supabase';
 import type { SiteSettings } from '@/types';
-import BrandMark, { hasCustomLogo } from '@/components/common/BrandMark';
+import BrandMark from '@/components/common/BrandMark';
+import BrandName from '@/components/common/BrandName';
+import { hasCustomLogo } from '@/lib/brand';
 
 interface AdminLoginProps {
   settings: SiteSettings;
@@ -50,7 +52,7 @@ export default function AdminLogin({ settings, onExit, onLoginSuccess, notAdmin 
       <div className="auth-card">
         <button className="brand auth-brand" onClick={onExit}>
           {hasCustomLogo(settings.logo_url) ? <img src={settings.logo_url} alt="" /> : <BrandMark size={36} />}
-          <span className="brand-name">Couronne <i>&</i> Toque</span>
+          <BrandName name={settings.site_name} />
         </button>
 
         <p className="kicker"><span /> Espace d’Administration Sécurisé</p>

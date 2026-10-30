@@ -87,12 +87,13 @@ const [settingsRows, contests, articles] = await Promise.all([
   fetchTable('articles', 'select=slug,title,summary,seo_title,seo_description,cover_image,updated_at&is_published=eq.true'),
 ]);
 const settings = settingsRows[0] || {};
-const defaultImage = settings.default_og_image || '/logo.png';
+// Photos d’exemple (banque d’images) ignorées : image de partage aux couleurs de la marque
+const defaultImage = settings.default_og_image && !settings.default_og_image.includes('pexels.com') ? settings.default_og_image : '/og-default.png';
 
 const pages = [
   {
     path: '/',
-    title: settings.default_title || 'Couronne & Toque — Révéler l’élégance, sur scène comme à table',
+    title: settings.default_title || 'MC Florentin — Révéler l’élégance, sur scène comme à table',
     description:
       settings.default_description ||
       'Coaching Miss & Mister, jury de concours d’élégance et cuisine gastronomique d’auteur.',
@@ -102,7 +103,7 @@ const pages = [
   ...Object.entries(pageMeta).map(([path, meta]) => ({ path, ...meta, image: defaultImage, priority: '0.8' })),
   ...contests.map((c) => ({
     path: `/mes-concours/${c.slug}`,
-    title: c.seo_title || `${c.name} (${c.edition}) — Couronne & Toque`,
+    title: c.seo_title || `${c.name} (${c.edition}) — MC Florentin`,
     description: c.seo_description || c.short_description,
     image: c.cover_image || defaultImage,
     lastmod: c.updated_at,
@@ -110,7 +111,7 @@ const pages = [
   })),
   ...articles.map((a) => ({
     path: `/actualites/${a.slug}`,
-    title: a.seo_title || `${a.title} — Couronne & Toque`,
+    title: a.seo_title || `${a.title} — MC Florentin`,
     description: a.seo_description || a.summary,
     image: a.cover_image || defaultImage,
     type: 'article',

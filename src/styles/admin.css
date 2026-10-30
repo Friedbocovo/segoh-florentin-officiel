@@ -27,7 +27,7 @@
 .sidebar-header {
   display: grid;
   gap: 14px;
-  padding: 30px 26px 26px;
+  padding: 24px 26px 20px;
   border-bottom: 1px solid rgba(239, 231, 218, 0.1);
 }
 
@@ -57,8 +57,8 @@
   flex: 1;
   display: grid;
   align-content: start;
-  gap: 26px;
-  padding: 26px 14px;
+  gap: 18px;
+  padding: 20px 14px;
 }
 
 .nav-group {
@@ -81,7 +81,7 @@
   align-items: center;
   gap: 12px;
   width: 100%;
-  min-height: 42px;
+  min-height: 38px;
   padding: 0 12px;
   border-radius: var(--radius);
   font-size: 14px;
@@ -141,8 +141,8 @@
 
 .sidebar-footer {
   display: grid;
-  gap: 4px;
-  padding: 18px 14px 24px;
+  gap: 2px;
+  padding: 12px 14px 16px;
   border-top: 1px solid rgba(239, 231, 218, 0.1);
 }
 
@@ -403,7 +403,7 @@
 .kpi-value {
   font-family: var(--font-display);
   font-size: 2.8rem;
-  font-weight: 300;
+  font-weight: 400;
   line-height: 1;
 }
 
@@ -1349,9 +1349,10 @@ td.table-actions > * + * {
   place-items: center;
   min-height: 100vh;
   padding: 32px 20px;
-  background:
-    linear-gradient(rgba(21, 17, 13, 0.82), rgba(21, 17, 13, 0.92)),
-    url('https://images.pexels.com/photos/20238956/pexels-photo-20238956.jpeg?auto=compress&cs=tinysrgb&h=1200&w=1800') center / cover;
+  background-color: var(--night);
+  background-image:
+    radial-gradient(circle at 50% 0%, rgba(201, 166, 107, 0.14), transparent 55%),
+    repeating-linear-gradient(135deg, rgba(239, 231, 218, 0.03) 0 1px, transparent 1px 16px);
 }
 
 .auth-card {
@@ -1688,4 +1689,142 @@ td.table-actions > * + * {
 .cloudinary-help-text {
   font-size: 12.5px;
   color: var(--muted);
+}
+
+/* --------------------------------------------------------------------------
+   ÉDITEURS DE LISTES (chiffres clés, valeurs)
+   -------------------------------------------------------------------------- */
+.meta-list-editor {
+  display: grid;
+  gap: 12px;
+  padding: 22px;
+  border: 1px solid var(--line);
+  background: var(--surface);
+}
+
+.meta-list-title {
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+}
+
+.meta-list-row {
+  display: grid;
+  grid-template-columns: 120px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 14px;
+}
+
+.meta-list-row.is-stacked {
+  grid-template-columns: minmax(0, 1fr) auto;
+  padding-bottom: 14px;
+  border-bottom: 1px solid var(--line);
+}
+
+.meta-list-row.is-stacked textarea {
+  grid-column: 1;
+  min-height: 70px;
+}
+
+.meta-list-row.is-stacked .action-icon-btn {
+  grid-column: 2;
+  grid-row: 1 / span 2;
+  align-self: center;
+}
+
+.meta-list-editor > .button {
+  justify-self: start;
+}
+
+label .cloudinary-help-text {
+  font-size: 12.5px;
+  font-weight: 400;
+  letter-spacing: 0;
+  text-transform: none;
+  color: var(--muted);
+}
+
+/* Vignettes sans image */
+.img-placeholder.table-thumb,
+.img-placeholder.cand-thumb,
+.contest-thumb-mini .img-placeholder {
+  width: 52px;
+  height: 64px;
+  min-height: 0;
+}
+
+.img-placeholder.cand-thumb {
+  width: 60px;
+  height: 76px;
+}
+
+.contest-thumb-mini .img-placeholder {
+  width: 56px;
+  height: 70px;
+}
+
+.img-placeholder.table-thumb .brand-mark,
+.img-placeholder.cand-thumb .brand-mark,
+.contest-thumb-mini .img-placeholder .brand-mark {
+  width: 26px;
+  height: 26px;
+}
+
+/* Élément d'une liste (carte, valeur, rubrique…) dans le formulaire de section */
+.meta-item-card {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: start;
+  gap: 14px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid var(--line);
+}
+
+.meta-item-fields {
+  display: grid;
+  gap: 4px;
+}
+
+.meta-item-fields textarea {
+  min-height: 72px;
+  margin-top: 8px;
+}
+
+.meta-item-card .action-icon-btn {
+  margin-top: 8px;
+}
+
+
+
+.subtab-btn {
+  white-space: nowrap;
+}
+
+.meta-item-fields {
+  gap: 14px;
+}
+
+.meta-item-index {
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+.content-modal label.meta-field {
+  gap: 4px;
+  font-size: 10px;
+  color: var(--muted);
+}
+
+.content-modal label.meta-field input {
+  min-height: 40px;
+  padding: 8px 0;
+}
+
+.subtabs-bar {
+  column-gap: 20px;
 }

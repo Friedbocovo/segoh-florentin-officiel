@@ -1,7 +1,9 @@
 import { ArrowUpRight, CircleUserRound, Facebook, Instagram, Mail, MapPin, MessageCircle, Phone, Youtube } from 'lucide-react';
 import type { SiteSettings } from '@/types';
 import { normalizeWhatsAppNumber } from '@/lib/whatsapp';
-import BrandMark, { hasCustomLogo } from '@/components/common/BrandMark';
+import BrandMark from '@/components/common/BrandMark';
+import BrandName from '@/components/common/BrandName';
+import { hasCustomLogo } from '@/lib/brand';
 
 interface FooterProps {
   settings: SiteSettings;
@@ -25,7 +27,7 @@ export default function Footer({ settings, onNavigate }: FooterProps) {
         <div className="footer-col brand-col">
           <button className="brand footer-brand" onClick={() => onNavigate('/')}>
             {hasCustomLogo(settings.logo_url) ? <img src={settings.logo_url} alt="" /> : <BrandMark size={52} />}
-            <span className="brand-name">Couronne <i>&</i> Toque</span>
+            <BrandName name={settings.site_name} />
           </button>
           <p className="footer-tagline">{settings.tagline}</p>
           <div className="footer-address">

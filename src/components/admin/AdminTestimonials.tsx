@@ -1,7 +1,7 @@
 import { FormEvent, useState } from 'react';
 import { Check, Edit3, MessageSquare, Plus, Star, ThumbsDown, ThumbsUp, Trash2, X } from 'lucide-react';
 import type { Testimonial } from '@/types';
-import { DataService, images } from '@/lib/supabase';
+import { DataService } from '@/lib/supabase';
 import CloudinaryUploader from '@/components/common/CloudinaryUploader';
 
 interface AdminTestimonialsProps {
@@ -48,7 +48,7 @@ export default function AdminTestimonials({
               id: '',
               author_name: '',
               author_role: '',
-              avatar_url: images.candidate1,
+              avatar_url: null,
               message: '',
               domain: 'coaching',
               contest_id: null,

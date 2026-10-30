@@ -4,7 +4,9 @@ import {
   Layers, LogOut, Mail, Menu, MessageSquare, Palette, Settings2, Utensils, X
 } from 'lucide-react';
 import type { ContactMessage, SiteSettings, Testimonial } from '@/types';
-import BrandMark, { hasCustomLogo } from '@/components/common/BrandMark';
+import BrandMark from '@/components/common/BrandMark';
+import BrandName from '@/components/common/BrandName';
+import { hasCustomLogo } from '@/lib/brand';
 
 export type AdminTab =
   | 'dashboard'
@@ -54,7 +56,7 @@ export default function AdminLayout({
       <div className="admin-mobile-bar">
         <button className="brand" onClick={onExit}>
           {hasCustomLogo(settings.logo_url) ? <img src={settings.logo_url} alt="" /> : <BrandMark size={36} />}
-          <span className="brand-name">Couronne <i>&</i> Toque</span>
+          <BrandName name={settings.site_name} />
         </button>
         <button
           className="admin-burger"
@@ -70,7 +72,7 @@ export default function AdminLayout({
         <div className="sidebar-header">
           <button className="brand sidebar-brand" onClick={onExit}>
             {hasCustomLogo(settings.logo_url) ? <img src={settings.logo_url} alt="" /> : <BrandMark size={36} />}
-            <span className="brand-name">Couronne <i>&</i> Toque</span>
+            <BrandName name={settings.site_name} />
           </button>
           <span className="cms-tag">Administration CMS</span>
         </div>

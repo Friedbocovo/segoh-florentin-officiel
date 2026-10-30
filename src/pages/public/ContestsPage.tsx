@@ -1,14 +1,19 @@
 import { useMemo, useState } from 'react';
 import { ArrowUpRight, Calendar, MapPin, Search, Sparkles, Trophy } from 'lucide-react';
-import type { Contest } from '@/types';
-import { images } from '@/lib/supabase';
+import type { SiteSection, Contest } from '@/types';
+import Picture from '@/components/common/Picture';
+import { PageHeading, SectionHead } from '@/components/common/SectionTitles';
+import EditorialIntro from '@/components/common/EditorialIntro';
+import { getSection } from '@/lib/pageSections';
+import { rich } from '@/lib/richText';
 
 interface ContestsPageProps {
+  sections: SiteSection[];
   contests: Contest[];
   onNavigate: (path: string) => void;
 }
 
-export default function ContestsPage({ contests, onNavigate }: ContestsPageProps) {
+export default function ContestsPage({ sections, contests, onNavigate }: ContestsPageProps) {
   const [search, setSearch] = useState('');
   const [yearFilter, setYearFilter] = useState('all');
   const [sortOrder, setSortOrder] = useState<'desc' | 'asc'>('desc');
@@ -36,17 +41,11 @@ export default function ContestsPage({ contests, onNavigate }: ContestsPageProps
       });
   }, [contests, search, yearFilter, sortOrder]);
 
+  const heading = getSection(sections, 'contests', 'heading');
+
   return (
     <main className="subpage wrap contests-page">
-      <div className="page-heading">
-        <div>
-          <p className="kicker"><span /> Catalogue & Historique des Élections</p>
-          <h1>Mes Concours Coachés</h1>
-        </div>
-        <p className="heading-note">
-          Découvrez l’ensemble des concours de Miss & Mister préparés avec passion, les parcours des candidats accompagnés et les titres remportés.
-        </p>
-      </div>
+      {heading.is_published && <PageHeading section={heading} />}
 
       {/* BARRE DE RECHERCHE ET FILTRES */}
       <div className="catalogue-toolbar">
@@ -107,7 +106,7 @@ export default function ContestsPage({ contests, onNavigate }: ContestsPageProps
                 onClick={() => onNavigate(`/mes-concours/${contest.slug}`)}
               >
                 <div className="contest-cover">
-                  <img src={contest.cover_image || images.stage} alt={contest.name} />
+                  <Picture src={contest.cover_image} alt={contest.name} />
                   <span className="contest-edition">{contest.edition}</span>
                 </div>
                 <div className="contest-info">

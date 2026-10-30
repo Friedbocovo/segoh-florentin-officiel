@@ -58,6 +58,15 @@ ALTER TABLE public.site_settings ALTER COLUMN accent_color SET DEFAULT '#8A6630'
 UPDATE public.site_settings SET accent_color = '#8A6630'
 WHERE lower(accent_color) IN ('#8d2732', '#9e293d');
 ALTER TABLE public.site_settings ALTER COLUMN logo_url SET DEFAULT '';
+UPDATE public.site_settings SET logo_url = '' WHERE logo_url = '/logo.png';
+
+-- Nouveau nom de marque : MC Florentin
+ALTER TABLE public.site_settings ALTER COLUMN site_name SET DEFAULT 'MC Florentin';
+UPDATE public.site_settings SET
+  site_name = replace(site_name, 'Couronne & Toque', 'MC Florentin'),
+  default_title = replace(default_title, 'Couronne & Toque', 'MC Florentin'),
+  default_description = replace(default_description, 'Couronne & Toque', 'MC Florentin'),
+  legal_notice = replace(legal_notice, 'Couronne & Toque', 'MC Florentin');
 
 ALTER TABLE public.contact_messages
   ADD COLUMN IF NOT EXISTS purpose text NOT NULL DEFAULT 'coaching',
@@ -118,7 +127,9 @@ CREATE POLICY "Admins read admin_users" ON public.admin_users FOR SELECT TO auth
 
 -- Lecture publique du contenu publié
 CREATE POLICY "Public read site_settings" ON public.site_settings FOR SELECT USING (true);
-CREATE POLICY "Public read site_sections" ON public.site_sections FOR SELECT USING (is_published = true OR public.is_admin());
+-- Sections lisibles par tous : une section « masquée » doit rester masquée côté site
+-- (sinon le texte par défaut la remplacerait). Elles ne contiennent rien de confidentiel.
+CREATE POLICY "Public read site_sections" ON public.site_sections FOR SELECT USING (true);
 CREATE POLICY "Public read coaching_services" ON public.coaching_services FOR SELECT USING (is_published = true OR public.is_admin());
 CREATE POLICY "Public read coaching_method_steps" ON public.coaching_method_steps FOR SELECT USING (is_published = true OR public.is_admin());
 CREATE POLICY "Public read coaching_faqs" ON public.coaching_faqs FOR SELECT USING (is_published = true OR public.is_admin());

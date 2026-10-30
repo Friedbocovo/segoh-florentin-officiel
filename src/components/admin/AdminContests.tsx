@@ -3,7 +3,8 @@ import {
   ArrowLeft, ArrowUpRight, Check, Edit3, Plus, Search, Trash2, Trophy, Users, X
 } from 'lucide-react';
 import type { Contest, ContestResult } from '@/types';
-import { DataService, images } from '@/lib/supabase';
+import { DataService } from '@/lib/supabase';
+import Picture from '@/components/common/Picture';
 import CloudinaryUploader from '@/components/common/CloudinaryUploader';
 
 interface AdminContestsProps {
@@ -56,7 +57,7 @@ export default function AdminContests({ contests, onRefresh, onFlashNotice }: Ad
               short_description: '',
               long_description: '',
               coach_role_description: '',
-              cover_image: images.stage,
+              cover_image: null,
               is_featured: false,
               sort_order: contests.length + 1,
               is_published: true,
@@ -106,7 +107,7 @@ export default function AdminContests({ contests, onRefresh, onFlashNotice }: Ad
               filtered.map((c) => (
                 <tr key={c.id}>
                   <td className="table-thumb-col">
-                    <img src={c.cover_image || images.stage} alt="" className="table-thumb" />
+                    <Picture src={c.cover_image} alt="" className="table-thumb" />
                   </td>
                   <td>
                     <strong>{c.name}</strong>
@@ -469,11 +470,11 @@ function ResultsManagerModal({
                   id: '',
                   contest_id: contest.id,
                   candidate_name: '',
-                  candidate_photo: images.candidate1,
+                  candidate_photo: null,
                   title_won: '',
                   category: 'Miss',
                   rank_position: 1,
-                  coaching_mention: 'Accompagnement Couronne & Toque',
+                  coaching_mention: 'Accompagnement MC Florentin',
                   description: '',
                   sort_order: results.length + 1,
                 })
@@ -493,7 +494,7 @@ function ResultsManagerModal({
             <div className="results-list-table">
               {results.map((r) => (
                 <div key={r.id} className="result-row-item">
-                  <img src={r.candidate_photo || images.portrait} alt="" className="cand-thumb" />
+                  <Picture src={r.candidate_photo} alt="" className="cand-thumb" />
                   <div className="cand-details">
                     <span className="cand-category">{r.category}</span>
                     <h4>{r.candidate_name}</h4>

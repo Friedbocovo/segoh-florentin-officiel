@@ -1,10 +1,17 @@
 import { FormEvent, useMemo, useState } from 'react';
 import { CheckCircle2, LoaderCircle, MessageSquare, Plus, Quote, Send, Star } from 'lucide-react';
-import type { Testimonial } from '@/types';
+import type { SiteSection, SiteSettings, Testimonial } from '@/types';
 import { DataService } from '@/lib/supabase';
+import CloudinaryUploader from '@/components/common/CloudinaryUploader';
+import { PageHeading, SectionHead } from '@/components/common/SectionTitles';
+import EditorialIntro from '@/components/common/EditorialIntro';
+import { getSection } from '@/lib/pageSections';
+import { rich } from '@/lib/richText';
 
 interface TestimonialsPageProps {
+  sections: SiteSection[];
   testimonials: Testimonial[];
+  settings: SiteSettings;
 }
 
 const domainConfig: Record<string, { label: string; badgeClass: string }> = {
@@ -21,12 +28,14 @@ function getInitials(name: string): string {
   return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
 }
 
-export default function TestimonialsPage({ testimonials }: TestimonialsPageProps) {
+export default function TestimonialsPage({ sections, testimonials, settings }: TestimonialsPageProps) {
   const [filterDomain, setFilterDomain] = useState<string>('all');
   const [showSubmitModal, setShowSubmitModal] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [submitError, setSubmitError] = useState('');
+  const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
+  const [avatarUploading, setAvatarUploading] = useState(false);
 
   // Uniquement les témoignages approuvés
   const approvedTestimonials = useMemo(() => {
@@ -46,7 +55,7 @@ export default function TestimonialsPage({ testimonials }: TestimonialsPageProps
     const result = await DataService.submitTestimonial({
       author_name: String(form.get('author_name') || ''),
       author_role: String(form.get('author_role') || ''),
-      avatar_url: String(form.get('avatar_url') || '') || null,
+      avatar_url: avatarUrl,
       message: String(form.get('message') || ''),
       domain: (form.get('domain') as any) || 'coaching',
       rating: 5,
@@ -60,20 +69,15 @@ export default function TestimonialsPage({ testimonials }: TestimonialsPageProps
       return;
     }
     setSubmitted(true);
+    setAvatarUrl(null);
     formEl.reset();
   }
 
+  const heading = getSection(sections, 'testimonials', 'heading');
+
   return (
     <main className="subpage wrap testimonials-page">
-      <div className="page-heading">
-        <div>
-          <p className="kicker"><span /> Confiance & Reconnaissance</p>
-          <h1>Témoignages & Avis</h1>
-        </div>
-        <p className="heading-note">
-          Les retours authentiques des candidates, candidats, comités d’élégance et hôtes de dîners d’exception.
-        </p>
-      </div>
+      {heading.is_published && <PageHeading section={heading} />}
 
       <div className="testimonials-action-bar">
         <div className="filter-pills-list">
@@ -209,10 +213,31 @@ export default function TestimonialsPage({ testimonials }: TestimonialsPageProps
                   />
                 </label>
 
-                <label>
-                  URL de votre photo ou avatar (facultatif)
-                  <input name="avatar_url" placeholder="https://..." />
-                </label>
+                <CloudinaryUploader
+
+                  label="Votre photo (facultatif)"
+
+                  currentUrl={avatarUrl}
+
+                  mediaType="image"
+
+                  accept="image/*"
+
+                  maxSizeMb={5}
+
+                  folder="mc-florentin/temoignages"
+
+                  settings={settings}
+
+                  onChange={({ url }) => setAvatarUrl(url)}
+
+                  onRemove={() => setAvatarUrl(null)}
+
+                  onUploadingChange={setAvatarUploading}
+
+                  helpText="Un portrait ou une photo de profil, de préférence carré."
+
+                />
 
                 <label>
                   Votre message ou témoignage *
@@ -233,7 +258,7 @@ export default function TestimonialsPage({ testimonials }: TestimonialsPageProps
                     Annuler
                   </button>
                   {submitError && <p className="form-error">{submitError}</p>}
-                  <button className="button button-dark" disabled={submitting}>
+                  <button className="button button-dark" disabled={submitting || avatarUploading}>
                     {submitting ? <LoaderCircle className="spin" size={16} /> : <Send size={15} />}
                     <span>{submitting ? 'Envoi...' : 'Envoyer mon témoignage'}</span>
                   </button>

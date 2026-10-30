@@ -1,7 +1,8 @@
 import { FormEvent, useState } from 'react';
 import { BookOpen, Calendar, Edit3, Plus, Search, Trash2, X } from 'lucide-react';
 import type { Article } from '@/types';
-import { DataService, images } from '@/lib/supabase';
+import { DataService } from '@/lib/supabase';
+import Picture from '@/components/common/Picture';
 import CloudinaryUploader from '@/components/common/CloudinaryUploader';
 
 interface AdminArticlesProps {
@@ -47,7 +48,7 @@ export default function AdminArticles({
               slug: '',
               summary: '',
               content: '',
-              cover_image: images.portrait,
+              cover_image: null,
               category: 'Conseils Coaching',
               published_at: new Date().toISOString(),
               is_published: true,
@@ -89,7 +90,7 @@ export default function AdminArticles({
             {filtered.map((art) => (
               <tr key={art.id}>
                 <td className="table-thumb-col">
-                  <img src={art.cover_image || images.portrait} alt="" className="table-thumb" />
+                  <Picture src={art.cover_image} alt="" className="table-thumb" />
                 </td>
                 <td>
                   <strong>{art.title}</strong>

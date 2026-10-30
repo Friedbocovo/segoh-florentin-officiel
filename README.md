@@ -1,4 +1,4 @@
-# Couronne & Toque — Portfolio Professionnel & CMS Administrateur
+# MC Florentin — Portfolio Professionnel & CMS Administrateur
 
 > **Coach Miss & Mister · Jury de Concours · Chef Cuisinier**  
 > *« Révéler l’élégance, sur scène comme à table »*
@@ -91,8 +91,9 @@ Ouvrez [http://localhost:5173](http://localhost:5173) dans votre navigateur.
 Dans le **SQL Editor** de Supabase, exécutez **dans cet ordre** :
 1. `supabase/migrations/20261026000000_full_cms_schema.sql` — crée les 14 tables du CMS ;
 2. `supabase/migrations/20261028000000_security_and_schema_repair.sql` — ajoute les colonnes manquantes, la table `admin_users` et des règles de sécurité réservant l'écriture aux administrateurs.
+3. `supabase/migrations/20261030000000_remove_stock_images.sql` — retire les photos d'illustration fictives (Pexels) de l'ancien contenu de démonstration.
 
-Les deux scripts peuvent être relancés sans risque, y compris sur une base qui a reçu les anciennes migrations du 25/10/2026.
+Ces scripts peuvent être relancés sans risque, y compris sur une base qui a reçu les anciennes migrations du 25/10/2026.
 
 > **Contenu de démonstration :** quand Supabase est branché, le site affiche uniquement le contenu de la base. Sur une base vide, le tableau de bord admin propose un bouton **« Importer »** qui copie le contenu d'exemple dans la base pour le modifier ensuite.
 

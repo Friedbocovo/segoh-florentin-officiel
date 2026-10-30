@@ -1,10 +1,17 @@
 import { FormEvent, useState } from 'react';
 import { ArrowUpRight, CheckCircle2, ChevronRight, Clock, DollarSign, LoaderCircle, MapPin, MessageCircle, MessageSquare, Quote, RotateCcw, Send, Sparkles, Users, Utensils } from 'lucide-react';
-import type { CulinaryItem, MediaItem, SiteSettings, Testimonial } from '@/types';
-import { DataService, images } from '@/lib/supabase';
+import type { SiteSection, CulinaryItem, MediaItem, SiteSettings, Testimonial } from '@/types';
+import { DataService } from '@/lib/supabase';
+import Picture from '@/components/common/Picture';
+import { pickImage } from '@/lib/media';
 import { buildCateringWhatsAppUrl } from '@/lib/whatsapp';
+import { PageHeading, SectionHead } from '@/components/common/SectionTitles';
+import EditorialIntro from '@/components/common/EditorialIntro';
+import { getSection } from '@/lib/pageSections';
+import { rich } from '@/lib/richText';
 
 interface GastronomyPageProps {
+  sections: SiteSection[];
   items: CulinaryItem[];
   media: MediaItem[];
   testimonials: Testimonial[];
@@ -14,6 +21,7 @@ interface GastronomyPageProps {
 }
 
 export default function GastronomyPage({
+  sections,
   items,
   media,
   testimonials,
@@ -26,6 +34,16 @@ export default function GastronomyPage({
   const [submitted, setSubmitted] = useState(false);
   const [whatsappRedirectUrl, setWhatsappRedirectUrl] = useState('');
   const [formError, setFormError] = useState('');
+
+  const sec = (key: string) => getSection(sections, 'gastronomie', key);
+  const heading = sec('heading');
+  const intro = sec('intro');
+  const dishesHead = sec('dishes_head');
+  const servicesHead = sec('services_head');
+  const galleryHead = sec('gallery_head');
+  const testimonialsHead = sec('testimonials_head');
+  const quoteForm = sec('quote_form');
+  const benefits = ((quoteForm.meta.benefits as string[] | undefined) ?? []).filter(Boolean);
 
   const activeItems = items.filter((item) => item.is_published);
   const dishes = activeItems.filter((i) => i.item_type === 'specialite' || i.item_type === 'creation');
@@ -70,64 +88,21 @@ export default function GastronomyPage({
   return (
     <main className="subpage wrap gastronomy-page">
       {/* 7.1 INTRODUCTION GASTRONOMIQUE */}
-      <div className="page-heading">
-        <div>
-          <p className="kicker"><span /> Cuisine d’Auteur & Événements Privés</p>
-          <h1>La Gastronomie Émotionnelle</h1>
-        </div>
-        <p className="heading-note">
-          Des assiettes pensées comme des compositions, un respect absolu du produit et l’élégance du goût au cœur de chaque tablée.
-        </p>
-      </div>
+      {heading.is_published && <PageHeading section={heading} />}
 
-      <section className="editorial-layout">
-        <div className="editorial-feature">
-          <img src={images.chef} alt="Chef cuisinier au travail" />
-          <div className="feature-caption">
-            <p>La précision comme signature</p>
-            <h2>L’accord parfait du goût et de l’allure</h2>
-          </div>
-        </div>
-
-        <div className="editorial-details">
-          <p className="dropcap">
-            La cuisine est le lieu suprême de la sincérité. Derrière chaque assiette, il y a la maîtrise du geste, la justesse des cuissons et la sensibilité d’une histoire que l’on offre en partage.
-          </p>
-          <div className="detail-rule" />
-          <p className="detail-lead">
-            Inspiré par le terroir français et les touches contemporaines, je conçois des menus intimistes pour vos dîners privés, banquets de comités d’élégance et célébrations d’exception.
-          </p>
-
-          <div className="detail">
-            <span><Sparkles size={20} /></span>
-            <div>
-              <h3>Produits nobles & de saison</h3>
-              <p>Sélection directe auprès de maraîchers raisonnés, pêcheurs côtiers et éleveurs passionnés.</p>
-            </div>
-          </div>
-
-          <div className="detail">
-            <span><Utensils size={20} /></span>
-            <div>
-              <h3>Expérience immersive sur mesure</h3>
-              <p>Du dressage au service à table, une prise en charge complète pour sublimer votre moment.</p>
-            </div>
-          </div>
-
-          <a href="#devis-gastronomie" className="button button-dark">
-            <span>Demander un menu personnalisé</span>
-            <ArrowUpRight size={16} />
-          </a>
-        </div>
-      </section>
+      {intro.is_published && (
+        <EditorialIntro
+          section={intro}
+          fallbackImage={pickImage(media, ['gastronomie'])}
+          imageAlt="Chef cuisinier au travail"
+          icons={[Sparkles, Utensils]}
+          onNavigate={onNavigate}
+        />
+      )}
 
       {/* 7.2 & 7.3 CRÉATIONS & SPÉCIALITÉS CULINAIRES */}
       <section className="culinary-dishes-section">
-        <div className="section-head">
-          <div>
-            <p className="kicker"><span /> Carte & Savoir-Faire</p>
-            <h2>Créations & Spécialités d’Auteur</h2>
-          </div>
+        <SectionHead section={dishesHead} aside={(
           <div className="category-filters">
             {['all', 'Entrée', 'Plat', 'Dessert'].map((cat) => (
               <button
@@ -139,13 +114,13 @@ export default function GastronomyPage({
               </button>
             ))}
           </div>
-        </div>
+        )} />
 
         <div className="dishes-grid">
           {filteredDishes.map((dish) => (
             <article key={dish.id} className="dish-card">
               <div className="dish-img-wrap">
-                <img src={dish.image_url || images.dessert} alt={dish.title} />
+                <Picture src={dish.image_url} alt={dish.title} />
                 <span className="dish-badge">{dish.category}</span>
               </div>
               <div className="dish-body">
@@ -169,12 +144,7 @@ export default function GastronomyPage({
 
       {/* 7.5 PRESTATIONS & PROPOSITIONS CULINAIRES */}
       <section className="culinary-services-section">
-        <div className="section-head">
-          <div>
-            <p className="kicker"><span /> Prestations Réelles</p>
-            <h2>Formules d’événements gastronomiques</h2>
-          </div>
-        </div>
+        <SectionHead section={servicesHead} />
 
         <div className="services-grid">
           {services.map((srv) => (
@@ -204,16 +174,7 @@ export default function GastronomyPage({
       {/* 7.6 GALERIE CULINAIRE */}
       {culinaryMedia.length > 0 && (
         <section className="culinary-gallery-section">
-          <div className="section-head">
-            <div>
-              <p className="kicker"><span /> En images</p>
-              <h2>Le visuel au service de la gourmandise</h2>
-            </div>
-            <button className="text-link" onClick={() => onNavigate('/galerie?categorie=gastronomie')}>
-              <span>Voir la galerie complète</span>
-              <ChevronRight size={16} />
-            </button>
-          </div>
+          <SectionHead section={galleryHead} linkLabel="Voir la galerie complète" onLink={() => onNavigate('/galerie?categorie=gastronomie')} />
           <div className="gallery-preview-grid">
             {culinaryMedia.map((m) => (
               <div key={m.id} className="gallery-preview-item" onClick={() => onOpenMedia(m)}>
@@ -231,12 +192,7 @@ export default function GastronomyPage({
       {/* 7.7 TÉMOIGNAGES CLIENTS GASTRONOMIE */}
       {culinaryTestimonials.length > 0 && (
         <section className="culinary-testimonials-section">
-          <div className="section-head">
-            <div>
-              <p className="kicker"><span /> Éloges des convives</p>
-              <h2>Témoignages à table</h2>
-            </div>
-          </div>
+          <SectionHead section={testimonialsHead} />
           <div className="testimonials-cards-grid">
             {culinaryTestimonials.map((t) => (
               <div key={t.id} className="testimonial-box">
@@ -258,25 +214,19 @@ export default function GastronomyPage({
       {/* 7.8 FORMULAIRE SPÉCIFIQUE DE DEMANDE DE PRESTATION */}
       <section id="devis-gastronomie" className="catering-form-section">
         <div className="catering-form-intro">
-          <p className="kicker"><span /> Devis Personnalisé</p>
-          <h2>Concevons votre menu sur mesure</h2>
-          <p>
-            Renseignez les détails de votre événement culinaire. Je reviendrai vers vous sous 48h avec une proposition adaptée à vos goûts et à vos contraintes.
-          </p>
-          <div className="form-benefits">
-            <div>
-              <CheckCircle2 size={16} className="text-red" />
-              <span>Menu adapté aux intolérances et régimes alimentaires</span>
+          {quoteForm.eyebrow && <p className="kicker"><span /> {quoteForm.eyebrow}</p>}
+          <h2>{rich(quoteForm.title)}</h2>
+          {quoteForm.content && <p>{quoteForm.content}</p>}
+          {benefits.length > 0 && (
+            <div className="form-benefits">
+              {benefits.map((benefit, i) => (
+                <div key={i}>
+                  <CheckCircle2 size={16} className="text-red" />
+                  <span>{benefit}</span>
+                </div>
+              ))}
             </div>
-            <div>
-              <CheckCircle2 size={16} className="text-red" />
-              <span>Service de table complet et vaisselle d’exception</span>
-            </div>
-            <div>
-              <CheckCircle2 size={16} className="text-red" />
-              <span>Déplacements possibles en France et en Europe</span>
-            </div>
-          </div>
+          )}
         </div>
 
         <div className="catering-form-wrapper">

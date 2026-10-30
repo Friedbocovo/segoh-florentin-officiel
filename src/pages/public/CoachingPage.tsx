@@ -1,9 +1,15 @@
 import { useState } from 'react';
 import { ArrowUpRight, Check, ChevronDown, ChevronRight, Crown, HelpCircle, MessageSquare, Sparkles, Trophy } from 'lucide-react';
-import type { CoachingFAQ, CoachingMethodStep, CoachingService, Contest, MediaItem, Testimonial } from '@/types';
-import { images } from '@/lib/supabase';
+import type { SiteSection, CoachingFAQ, CoachingMethodStep, CoachingService, Contest, MediaItem, Testimonial } from '@/types';
+import Picture from '@/components/common/Picture';
+import { pickImage } from '@/lib/media';
+import { PageHeading, SectionHead } from '@/components/common/SectionTitles';
+import EditorialIntro from '@/components/common/EditorialIntro';
+import { getSection } from '@/lib/pageSections';
+import { rich } from '@/lib/richText';
 
 interface CoachingPageProps {
+  sections: SiteSection[];
   services: CoachingService[];
   methodSteps: CoachingMethodStep[];
   faqs: CoachingFAQ[];
@@ -15,6 +21,7 @@ interface CoachingPageProps {
 }
 
 export default function CoachingPage({
+  sections,
   services,
   methodSteps,
   faqs,
@@ -25,6 +32,16 @@ export default function CoachingPage({
   onOpenMedia,
 }: CoachingPageProps) {
   const [openFaq, setOpenFaq] = useState<string | null>(null);
+  const sec = (key: string) => getSection(sections, 'coaching', key);
+  const heading = sec('heading');
+  const intro = sec('intro');
+  const servicesHead = sec('services_head');
+  const methodHead = sec('method_head');
+  const resultsHead = sec('results_head');
+  const galleryHead = sec('gallery_head');
+  const testimonialsHead = sec('testimonials_head');
+  const faqHead = sec('faq_head');
+  const cta = sec('cta');
 
   const activeServices = services.filter((s) => s.is_published);
   const activeSteps = methodSteps.filter((s) => s.is_published).sort((a, b) => a.step_number - b.step_number);
@@ -39,69 +56,21 @@ export default function CoachingPage({
   return (
     <main className="subpage wrap coaching-page">
       {/* 5.1 INTRODUCTION AU COACHING */}
-      <div className="page-heading">
-        <div>
-          <p className="kicker"><span /> Pôle Accompagnement Miss & Mister</p>
-          <h1>Le Coaching Scénique</h1>
-        </div>
-        <p className="heading-note">
-          Révéler la prestance, libérer la voix et forger un mental de vainqueur pour faire la différence le soir du sacre.
-        </p>
-      </div>
+      {heading.is_published && <PageHeading section={heading} />}
 
-      <section className="editorial-layout">
-        <div className="editorial-feature">
-          <img src={images.stage} alt="Préparation scénique concours" />
-          <div className="feature-caption">
-            <p>De l’audition au sacre</p>
-            <h2>La présence ne s’improvise pas</h2>
-          </div>
-        </div>
-
-        <div className="editorial-details">
-          <p className="dropcap">
-            Participer à une élection de Miss ou de Mister est une aventure humaine intense qui exige bien plus qu’un physique avantageux. C’est une épreuve d’éloquence, d’équilibre émotionnel et de vérité scénique.
-          </p>
-          <div className="detail-rule" />
-          <p className="detail-lead">
-            Mon accompagnement s’adresse aux personnalités déterminées qui refusent les faux-semblants et souhaitent marquer les esprits par leur élégance, leur maintien et leur clarté de parole.
-          </p>
-          <div className="coaching-highlights">
-            <div>
-              <Check size={18} className="text-red" />
-              <span>Diagnostic individuel sans complaisance</span>
-            </div>
-            <div>
-              <Check size={18} className="text-red" />
-              <span>Travail précis de la démarche & des pauses scéniques</span>
-            </div>
-            <div>
-              <Check size={18} className="text-red" />
-              <span>Entraînement intensif à l’interview du jury</span>
-            </div>
-            <div>
-              <Check size={18} className="text-red" />
-              <span>Gestion du stress et ancrage de la sérénité</span>
-            </div>
-          </div>
-          <button
-            className="button button-dark"
-            onClick={() => onNavigate('/contact?motif=coaching')}
-          >
-            <span>Réserver un premier entretien</span>
-            <ArrowUpRight size={16} />
-          </button>
-        </div>
-      </section>
+      {intro.is_published && (
+        <EditorialIntro
+          section={intro}
+          fallbackImage={pickImage(media, ['coaching', 'concours'])}
+          imageAlt="Préparation scénique concours"
+          icons={[Sparkles, Crown, Trophy]}
+          onNavigate={onNavigate}
+        />
+      )}
 
       {/* 5.2 SERVICES DE COACHING */}
       <section className="coaching-services-section">
-        <div className="section-head">
-          <div>
-            <p className="kicker"><span /> Modules & Formules</p>
-            <h2>Mes programmes d’accompagnement</h2>
-          </div>
-        </div>
+        <SectionHead section={servicesHead} />
 
         <div className="services-grid">
           {activeServices.map((service) => (
@@ -134,12 +103,7 @@ export default function CoachingPage({
       {/* 5.3 MÉTHODE D'ACCOMPAGNEMENT */}
       {activeSteps.length > 0 && (
         <section className="method-section">
-          <div className="section-head">
-            <div>
-              <p className="kicker"><span /> Méthodologie éprouvée</p>
-              <h2>Les 4 étapes clés vers le podium</h2>
-            </div>
-          </div>
+          <SectionHead section={methodHead} />
           <div className="method-steps-grid">
             {activeSteps.map((step) => (
               <div key={step.id} className="method-step-card">
@@ -154,22 +118,13 @@ export default function CoachingPage({
 
       {/* 5.4 EXPÉRIENCES ET RÉSULTATS */}
       <section className="coaching-results-section">
-        <div className="section-head">
-          <div>
-            <p className="kicker"><span /> Résultats concrets</p>
-            <h2>Les concours accompagnés</h2>
-          </div>
-          <button className="text-link" onClick={() => onNavigate('/mes-concours')}>
-            <span>Voir tout le catalogue</span>
-            <ChevronRight size={16} />
-          </button>
-        </div>
+        <SectionHead section={resultsHead} linkLabel="Voir tout le catalogue" onLink={() => onNavigate('/mes-concours')} />
 
         <div className="contests-grid">
           {contests.slice(0, 3).map((contest) => (
             <article key={contest.id} className="contest-card" onClick={() => onNavigate(`/mes-concours/${contest.slug}`)}>
               <div className="contest-cover">
-                <img src={contest.cover_image || images.stage} alt={contest.name} />
+                <Picture src={contest.cover_image} alt={contest.name} />
                 <span className="contest-edition">{contest.edition}</span>
               </div>
               <div className="contest-info">
@@ -196,16 +151,7 @@ export default function CoachingPage({
       {/* 5.5 GALERIE DU COACHING */}
       {coachingMedia.length > 0 && (
         <section className="coaching-gallery-section">
-          <div className="section-head">
-            <div>
-              <p className="kicker"><span /> En immersion</p>
-              <h2>Dans les coulisses de la préparation</h2>
-            </div>
-            <button className="text-link" onClick={() => onNavigate('/galerie?categorie=coaching')}>
-              <span>Galerie photos</span>
-              <ChevronRight size={16} />
-            </button>
-          </div>
+          <SectionHead section={galleryHead} linkLabel="Galerie photos" onLink={() => onNavigate('/galerie?categorie=coaching')} />
           <div className="gallery-preview-grid">
             {coachingMedia.map((item) => (
               <div key={item.id} className="gallery-preview-item" onClick={() => onOpenMedia(item)}>
@@ -223,12 +169,7 @@ export default function CoachingPage({
       {/* 5.6 TÉMOIGNAGES COACHING */}
       {coachingTestimonials.length > 0 && (
         <section className="coaching-testimonials-section">
-          <div className="section-head">
-            <div>
-              <p className="kicker"><span /> Ils ont vécu l’aventure</p>
-              <h2>Témoignages de candidats</h2>
-            </div>
-          </div>
+          <SectionHead section={testimonialsHead} />
           <div className="testimonials-cards-grid">
             {coachingTestimonials.map((t) => (
               <div key={t.id} className="testimonial-box">
@@ -250,12 +191,7 @@ export default function CoachingPage({
       {/* 5.7 QUESTIONS FRÉQUENTES */}
       {activeFaqs.length > 0 && (
         <section className="faq-section">
-          <div className="section-head">
-            <div>
-              <p className="kicker"><span /> Réponses claires</p>
-              <h2>Foire aux questions</h2>
-            </div>
-          </div>
+          <SectionHead section={faqHead} />
           <div className="faq-accordion">
             {activeFaqs.map((faq) => (
               <div key={faq.id} className={`faq-item ${openFaq === faq.id ? 'open' : ''}`}>
@@ -275,22 +211,22 @@ export default function CoachingPage({
       )}
 
       {/* 5.8 DEMANDE DE COACHING PRÉREMPLIE */}
+      {cta.is_published && (
       <section className="coaching-cta-box">
         <div className="cta-inner">
           <Crown size={38} className="cta-icon" />
-          <h2>Prêt à viser le titre ?</h2>
-          <p>
-            Chaque grande aventure commence par un premier contact. Échangeons sur vos ambitions et planifions votre séance d’évaluation.
-          </p>
+          <h2>{rich(cta.title)}</h2>
+          {cta.content && <p>{cta.content}</p>}
           <button
             className="button button-dark"
-            onClick={() => onNavigate('/contact?motif=coaching')}
+            onClick={() => onNavigate(cta.button_url || '/contact')}
           >
-            <span>Faire une demande de coaching</span>
+            <span>{cta.button_label}</span>
             <ArrowUpRight size={16} />
           </button>
         </div>
       </section>
+      )}
     </main>
   );
 }

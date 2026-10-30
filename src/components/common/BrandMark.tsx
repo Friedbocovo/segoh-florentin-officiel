@@ -3,7 +3,7 @@ interface BrandMarkProps {
   className?: string;
 }
 
-/** Monogramme « C & T » : remplace le logo bitmap tant qu'aucun logo personnalisé n'est défini. */
+/** Monogramme « MC » couronné : remplace le logo bitmap tant qu'aucun logo personnalisé n'est défini. */
 export default function BrandMark({ size = 44, className = '' }: BrandMarkProps) {
   return (
     <svg
@@ -28,20 +28,14 @@ export default function BrandMark({ size = 44, className = '' }: BrandMarkProps)
         x="32"
         y="43"
         textAnchor="middle"
-        fontFamily="'Cormorant Garamond', Garamond, serif"
-        fontSize="22"
+        fontFamily="'EB Garamond', Garamond, serif"
+        fontSize="21"
         fontWeight="400"
         fill="currentColor"
-        letterSpacing="0.5"
+        letterSpacing="1"
       >
-        C<tspan fontStyle="italic" fontSize="17" dx="1" dy="-1">&amp;</tspan>
-        <tspan dx="1" dy="1">T</tspan>
+        MC
       </text>
     </svg>
   );
-}
-
-/** Vrai si un logo personnalisé (autre que l'ancien logo par défaut) a été configuré. */
-export function hasCustomLogo(logoUrl?: string | null): boolean {
-  return Boolean(logoUrl && logoUrl !== '/logo.png');
 }

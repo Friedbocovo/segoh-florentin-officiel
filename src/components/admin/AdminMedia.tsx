@@ -1,7 +1,7 @@
 import { FormEvent, useState } from 'react';
 import { Cloud, Edit3, Image as ImageIcon, Play, Plus, Search, Trash2, Video, X } from 'lucide-react';
 import type { Contest, MediaItem, SiteSettings } from '@/types';
-import { DataService, images } from '@/lib/supabase';
+import { DataService } from '@/lib/supabase';
 import CloudinaryUploader from '@/components/common/CloudinaryUploader';
 
 interface AdminMediaProps {
@@ -52,8 +52,8 @@ export default function AdminMedia({
               id: '',
               title: '',
               media_type: 'image',
-              url: images.stage,
-              thumbnail_url: images.stage,
+              url: '',
+              thumbnail_url: null,
               alt_text: '',
               caption: '',
               category: 'galerie',

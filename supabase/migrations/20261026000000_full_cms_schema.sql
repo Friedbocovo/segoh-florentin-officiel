@@ -1,5 +1,5 @@
 /*
-# Migration complète pour Couronne & Toque CMS
+# Migration complète pour MC Florentin CMS
 Tables créées :
 1. site_settings (singleton pour config globale, SEO, réseaux, couleur d'accent)
 2. site_sections (blocs configurables d'accueil et à propos)
@@ -20,7 +20,7 @@ Tables créées :
 -- 1. SITE SETTINGS
 CREATE TABLE IF NOT EXISTS public.site_settings (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
-  site_name text NOT NULL DEFAULT 'Couronne & Toque',
+  site_name text NOT NULL DEFAULT 'MC Florentin',
   tagline text NOT NULL DEFAULT 'Coach Miss & Mister · Jury de Concours · Chef Cuisinier',
   contact_email text NOT NULL DEFAULT 'bonjour@couronne-toque.fr',
   contact_phone text NOT NULL DEFAULT '+33 6 00 00 00 00',
@@ -28,12 +28,12 @@ CREATE TABLE IF NOT EXISTS public.site_settings (
   instagram_url text NOT NULL DEFAULT 'https://instagram.com/couronne_et_toque',
   facebook_url text NOT NULL DEFAULT 'https://facebook.com/couronne.toque',
   youtube_url text NOT NULL DEFAULT 'https://youtube.com/@couronnetoque',
-  default_title text NOT NULL DEFAULT 'Couronne & Toque — Révéler l’élégance, sur scène comme à table',
+  default_title text NOT NULL DEFAULT 'MC Florentin — Révéler l’élégance, sur scène comme à table',
   default_description text NOT NULL DEFAULT 'Coaching de Miss & Mister, arbitrage lors de jurys de concours d’élégance et cuisine gastronomique d’auteur.',
-  default_og_image text NOT NULL DEFAULT 'https://images.pexels.com/photos/32683223/pexels-photo-32683223.jpeg?auto=compress&cs=tinysrgb&h=1200&w=900',
+  default_og_image text NOT NULL DEFAULT '',
   accent_color text NOT NULL DEFAULT '#9e293d',
   logo_url text NOT NULL DEFAULT '/logo.png',
-  legal_notice text NOT NULL DEFAULT 'Couronne & Toque - Tous droits réservés.',
+  legal_notice text NOT NULL DEFAULT 'MC Florentin - Tous droits réservés.',
   updated_at timestamptz NOT NULL DEFAULT now()
 );
 
@@ -169,7 +169,7 @@ CREATE TABLE IF NOT EXISTS public.contest_results (
   title_won text NOT NULL,
   category text NOT NULL DEFAULT 'Miss',
   rank_position integer,
-  coaching_mention text NOT NULL DEFAULT 'Accompagnement Couronne & Toque',
+  coaching_mention text NOT NULL DEFAULT 'Accompagnement MC Florentin',
   description text NOT NULL DEFAULT '',
   sort_order integer NOT NULL DEFAULT 0,
   created_at timestamptz NOT NULL DEFAULT now(),

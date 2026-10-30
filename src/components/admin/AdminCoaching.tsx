@@ -1,7 +1,8 @@
 import { FormEvent, useState } from 'react';
 import { Crown, Edit3, HelpCircle, ListOrdered, Plus, Sparkles, Trash2, X } from 'lucide-react';
 import type { CoachingFAQ, CoachingMethodStep, CoachingService } from '@/types';
-import { DataService, images } from '@/lib/supabase';
+import { DataService } from '@/lib/supabase';
+import Picture from '@/components/common/Picture';
 import CloudinaryUploader from '@/components/common/CloudinaryUploader';
 
 interface AdminCoachingProps {
@@ -61,7 +62,7 @@ export default function AdminCoaching({
                   id: '',
                   title: '',
                   description: '',
-                  image_url: images.stage,
+                  image_url: null,
                   price_info: '',
                   duration_info: '',
                   button_label: 'Réserver ce parcours',
@@ -158,7 +159,7 @@ export default function AdminCoaching({
               {services.map((srv) => (
                 <tr key={srv.id}>
                   <td className="table-thumb-col">
-                    <img src={srv.image_url || images.stage} alt="" className="table-thumb" />
+                    <Picture src={srv.image_url} alt="" className="table-thumb" />
                   </td>
                   <td><strong>{srv.title}</strong></td>
                   <td className="max-w-md">{srv.description.slice(0, 95)}...</td>

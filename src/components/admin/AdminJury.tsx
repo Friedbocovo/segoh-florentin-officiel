@@ -1,7 +1,8 @@
 import { FormEvent, useState } from 'react';
 import { Award, Edit3, Plus, Shield, Trash2, X } from 'lucide-react';
 import type { JuryCriterion, JuryExperience } from '@/types';
-import { DataService, images } from '@/lib/supabase';
+import { DataService } from '@/lib/supabase';
+import Picture from '@/components/common/Picture';
 import CloudinaryUploader from '@/components/common/CloudinaryUploader';
 
 interface AdminJuryProps {
@@ -57,7 +58,7 @@ export default function AdminJury({
                   organizer: '',
                   role_title: 'Membre du Jury Officiel',
                   description: '',
-                  image_url: images.table,
+                  image_url: null,
                   sort_order: experiences.length + 1,
                   is_published: true,
                 })
@@ -130,7 +131,7 @@ export default function AdminJury({
               {experiences.map((exp) => (
                 <tr key={exp.id}>
                   <td className="table-thumb-col">
-                    <img src={exp.image_url || images.table} alt="" className="table-thumb" />
+                    <Picture src={exp.image_url} alt="" className="table-thumb" />
                   </td>
                   <td>
                     <strong>{exp.event_name}</strong>

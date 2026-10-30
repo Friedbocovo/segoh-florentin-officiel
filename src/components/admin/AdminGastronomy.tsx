@@ -1,7 +1,8 @@
 import { FormEvent, useState } from 'react';
 import { Edit3, Plus, Trash2, Utensils, X } from 'lucide-react';
 import type { CulinaryItem } from '@/types';
-import { DataService, images } from '@/lib/supabase';
+import { DataService } from '@/lib/supabase';
+import Picture from '@/components/common/Picture';
 import CloudinaryUploader from '@/components/common/CloudinaryUploader';
 
 interface AdminGastronomyProps {
@@ -46,7 +47,7 @@ export default function AdminGastronomy({
               ingredients: '',
               dietary_info: '',
               price_info: '',
-              image_url: images.dessert,
+              image_url: null,
               sort_order: items.length + 1,
               is_published: true,
             })
@@ -93,7 +94,7 @@ export default function AdminGastronomy({
             {filtered.map((item) => (
               <tr key={item.id}>
                 <td className="table-thumb-col">
-                  <img src={item.image_url || images.dessert} alt="" className="table-thumb" />
+                  <Picture src={item.image_url} alt="" className="table-thumb" />
                 </td>
                 <td>
                   <strong>{item.title}</strong>

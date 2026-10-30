@@ -1,5 +1,5 @@
 /**
- * Utilitaires WhatsApp pour le site Couronne & Toque
+ * Utilitaires WhatsApp pour le site MC Florentin
  */
 
 /** Numéro WhatsApp par défaut (remplacé par celui saisi dans Admin › Réglages). */
@@ -71,7 +71,7 @@ export function buildContactWhatsAppUrl(
 
   const purposeText = purposeLabels[data.purpose || ''] || data.purpose || 'Général';
 
-  let text = `👑 *NOUVEAU MESSAGE — COURONNE & TOQUE*\n\n`;
+  let text = `👑 *NOUVEAU MESSAGE — MC FLORENTIN*\n\n`;
   text += `👤 *Nom :* ${data.name}\n`;
   text += `📧 *E-mail :* ${data.email}\n`;
   if (data.phone) text += `📞 *Téléphone :* ${data.phone}\n`;

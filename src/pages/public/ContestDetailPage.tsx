@@ -1,10 +1,15 @@
 import { useEffect } from 'react';
 import { ArrowLeft, ArrowUpRight, Award, Calendar, CheckCircle2, ChevronRight, Crown, MapPin, Sparkles, Trophy, Users } from 'lucide-react';
-import type { Contest, MediaItem } from '@/types';
-import { images } from '@/lib/supabase';
+import type { SiteSection, Contest, MediaItem } from '@/types';
+import Picture from '@/components/common/Picture';
 import { canonicalUrl, updateSEO } from '@/lib/seo';
+import { PageHeading, SectionHead } from '@/components/common/SectionTitles';
+import EditorialIntro from '@/components/common/EditorialIntro';
+import { getSection } from '@/lib/pageSections';
+import { rich } from '@/lib/richText';
 
 interface ContestDetailPageProps {
+  sections: SiteSection[];
   slug: string;
   contests: Contest[];
   media: MediaItem[];
@@ -12,7 +17,7 @@ interface ContestDetailPageProps {
   onOpenMedia: (item: MediaItem) => void;
 }
 
-export default function ContestDetailPage({
+export default function ContestDetailPage({ sections,
   slug,
   contests,
   media,
@@ -24,9 +29,9 @@ export default function ContestDetailPage({
   useEffect(() => {
     if (contest) {
       updateSEO({
-        title: contest.seo_title || `${contest.name} (${contest.edition}) — Couronne & Toque`,
+        title: contest.seo_title || `${contest.name} (${contest.edition}) — MC Florentin`,
         description: contest.seo_description || contest.short_description || contest.long_description.slice(0, 160),
-        ogImage: contest.cover_image || images.stage,
+        ogImage: contest.cover_image || undefined,
         canonical: canonicalUrl(`/mes-concours/${contest.slug}`),
       });
     }
@@ -57,6 +62,8 @@ export default function ContestDetailPage({
   // Groupement des résultats par catégorie
   const results = contest.results || [];
 
+  const detailCta = getSection(sections, 'contests', 'detail_cta');
+
   return (
     <main className="subpage wrap contest-detail-page">
       {/* RETOUR & EN-TÊTE */}
@@ -67,7 +74,7 @@ export default function ContestDetailPage({
 
       <div className="contest-hero-block">
         <div className="contest-hero-poster">
-          <img src={contest.cover_image || images.stage} alt={contest.name} />
+          <Picture src={contest.cover_image} alt={contest.name} />
           <span className="poster-edition">{contest.edition}</span>
         </div>
 
@@ -127,7 +134,7 @@ export default function ContestDetailPage({
             <h2>Candidats accompagnés & Titres obtenus</h2>
           </div>
           <p className="section-note">
-            Les distinctions ci-dessous honorent le travail et le talent des candidats accompagnés par Couronne & Toque lors de cette édition.
+            Les distinctions ci-dessous honorent le travail et le talent des candidats accompagnés par MC Florentin lors de cette édition.
           </p>
         </div>
 
@@ -141,8 +148,8 @@ export default function ContestDetailPage({
             {results.map((result) => (
               <div key={result.id} className="candidate-result-card">
                 <div className="candidate-photo-wrap">
-                  <img
-                    src={result.candidate_photo || images.portrait}
+                  <Picture
+                    src={result.candidate_photo}
                     alt={result.candidate_name}
                   />
                   <span className="category-pill">{result.category}</span>
@@ -230,18 +237,18 @@ export default function ContestDetailPage({
       )}
 
       {/* APPEL À CANDIDATURE */}
+      {detailCta.is_published && (
       <section className="contest-footer-cta">
         <div className="cta-content">
-          <h2>Vous visez un titre lors d’une prochaine élection ?</h2>
-          <p>
-            Rejoignez l’accompagnement d’excellence Couronne & Toque pour vous démarquer dès les présélections.
-          </p>
-          <button className="button button-dark" onClick={() => onNavigate('/contact?motif=coaching')}>
-            <span>Me contacter pour ce concours</span>
+          <h2>{rich(detailCta.title)}</h2>
+          {detailCta.content && <p>{detailCta.content}</p>}
+          <button className="button button-dark" onClick={() => onNavigate(detailCta.button_url || '/contact')}>
+            <span>{detailCta.button_label}</span>
             <ArrowUpRight size={16} />
           </button>
         </div>
       </section>
+      )}
     </main>
   );
 }

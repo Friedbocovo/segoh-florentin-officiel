@@ -1,14 +1,19 @@
 import { useMemo, useState } from 'react';
 import { ArrowUpRight, Calendar, Search, Tag } from 'lucide-react';
-import type { Article } from '@/types';
-import { images } from '@/lib/supabase';
+import type { SiteSection, Article } from '@/types';
+import Picture from '@/components/common/Picture';
+import { PageHeading, SectionHead } from '@/components/common/SectionTitles';
+import EditorialIntro from '@/components/common/EditorialIntro';
+import { getSection } from '@/lib/pageSections';
+import { rich } from '@/lib/richText';
 
 interface NewsPageProps {
+  sections: SiteSection[];
   articles: Article[];
   onNavigate: (path: string) => void;
 }
 
-export default function NewsPage({ articles, onNavigate }: NewsPageProps) {
+export default function NewsPage({ sections, articles, onNavigate }: NewsPageProps) {
   const [search, setSearch] = useState('');
   const [categoryFilter, setCategoryFilter] = useState('all');
 
@@ -31,17 +36,11 @@ export default function NewsPage({ articles, onNavigate }: NewsPageProps) {
       .sort((a, b) => new Date(b.published_at).getTime() - new Date(a.published_at).getTime());
   }, [articles, search, categoryFilter]);
 
+  const heading = getSection(sections, 'news', 'heading');
+
   return (
     <main className="subpage wrap news-page">
-      <div className="page-heading">
-        <div>
-          <p className="kicker"><span /> Journal & Réflexions</p>
-          <h1>Actualités & Articles</h1>
-        </div>
-        <p className="heading-note">
-          Conseils de préparation aux concours, réflexions sur l’élégance scénique et récits culinaires.
-        </p>
-      </div>
+      {heading.is_published && <PageHeading section={heading} />}
 
       {/* RECHERCHE ET FILTRES CATÉGORIES */}
       <div className="catalogue-toolbar">
@@ -84,7 +83,7 @@ export default function NewsPage({ articles, onNavigate }: NewsPageProps) {
               onClick={() => onNavigate(`/actualites/${article.slug}`)}
             >
               <div className="news-thumb">
-                <img src={article.cover_image || images.portrait} alt={article.title} />
+                <Picture src={article.cover_image} alt={article.title} />
                 <span className="news-cat">{article.category}</span>
               </div>
               <div className="news-card-body">

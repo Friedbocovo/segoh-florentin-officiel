@@ -1,8 +1,14 @@
 import { ArrowUpRight, Award, Calendar, CheckCircle2, ChevronRight, MapPin, Quote, Shield, Star, Users } from 'lucide-react';
-import type { JuryCriterion, JuryExperience, MediaItem, Testimonial } from '@/types';
-import { images } from '@/lib/supabase';
+import type { SiteSection, JuryCriterion, JuryExperience, MediaItem, Testimonial } from '@/types';
+import Picture from '@/components/common/Picture';
+import { pickImage } from '@/lib/media';
+import { PageHeading, SectionHead } from '@/components/common/SectionTitles';
+import EditorialIntro from '@/components/common/EditorialIntro';
+import { getSection } from '@/lib/pageSections';
+import { rich } from '@/lib/richText';
 
 interface JuryPageProps {
+  sections: SiteSection[];
   experiences: JuryExperience[];
   criteria: JuryCriterion[];
   testimonials: Testimonial[];
@@ -12,6 +18,7 @@ interface JuryPageProps {
 }
 
 export default function JuryPage({
+  sections,
   experiences,
   criteria,
   testimonials,
@@ -24,73 +31,34 @@ export default function JuryPage({
   const organizerTestimonials = testimonials.filter((t) => t.status === 'approved' && t.domain === 'jury');
   const juryMedia = media.filter((m) => m.category === 'jury');
 
+  const sec = (key: string) => getSection(sections, 'jury', key);
+  const heading = sec('heading');
+  const intro = sec('intro');
+  const criteriaHead = sec('criteria_head');
+  const experiencesHead = sec('experiences_head');
+  const testimonialsHead = sec('testimonials_head');
+  const cta = sec('cta');
+
   return (
     <main className="subpage wrap jury-page">
       {/* EN-TÊTE DE PAGE */}
-      <div className="page-heading">
-        <div>
-          <p className="kicker"><span /> Arbitrage & Évaluation Officielle</p>
-          <h1>Membre de Jury de Concours</h1>
-        </div>
-        <p className="heading-note">
-          Une lecture attentive, humaine et intransigeante de l’élégance, au service de sélections équitables et prestigieuses.
-        </p>
-      </div>
+      {heading.is_published && <PageHeading section={heading} />}
 
       {/* RÔLE ET APPROCHE */}
-      <section className="editorial-layout">
-        <div className="editorial-feature">
-          <img src={images.table} alt="Table du jury officiel" />
-          <div className="feature-caption">
-            <p>Déontologie & Intégrité</p>
-            <h2>Regarder au-delà de l’apparence</h2>
-          </div>
-        </div>
-
-        <div className="editorial-details">
-          <p className="dropcap">
-            Participer à un jury de concours Miss ou Mister n’est pas un simple exercice d’observation esthétique. C’est une responsabilité morale envers des jeunes femmes et des jeunes hommes qui investissent leurs espoirs et leur travail.
-          </p>
-          <div className="detail-rule" />
-          <p className="detail-lead">
-            Mon engagement repose sur une grille d’analyse rigoureuse : l’écoute active lors de l’interview, la perception de la bienveillance collective en coulisses et l’adéquation de l’allure avec les responsabilités d’un titre officiel.
-          </p>
-
-          <div className="detail">
-            <span><Shield size={20} /></span>
-            <div>
-              <h3>Impartialité absolue</h3>
-              <p>Aucune complaisance, aucune influence extérieure. Chaque candidat est jugé uniquement sur sa prestation scénique et humaine le jour J.</p>
-            </div>
-          </div>
-
-          <div className="detail">
-            <span><Award size={20} /></span>
-            <div>
-              <h3>32 jurys régionaux et nationaux</h3>
-              <p>Une expérience confirmée des coulisses des comités Miss Élégance, Mister France et sélections régionales majeures.</p>
-            </div>
-          </div>
-
-          <button
-            className="button button-dark"
-            onClick={() => onNavigate('/contact?motif=jury')}
-          >
-            <span>Inviter comme membre de jury</span>
-            <ArrowUpRight size={16} />
-          </button>
-        </div>
-      </section>
+      {intro.is_published && (
+        <EditorialIntro
+          section={intro}
+          fallbackImage={pickImage(media, ['jury'])}
+          imageAlt="Table du jury officiel"
+          icons={[Shield, Award]}
+          onNavigate={onNavigate}
+        />
+      )}
 
       {/* CRITÈRES D'ÉVALUATION PUBLICS */}
       {activeCriteria.length > 0 && (
         <section className="jury-criteria-section">
-          <div className="section-head">
-            <div>
-              <p className="kicker"><span /> Principes & Barèmes</p>
-              <h2>Mes critères d’évaluation</h2>
-            </div>
-          </div>
+          <SectionHead section={criteriaHead} />
           <div className="criteria-grid">
             {activeCriteria.map((crit, index) => (
               <div key={crit.id} className="criteria-card">
@@ -105,18 +73,13 @@ export default function JuryPage({
 
       {/* CONCOURS ARBITRÉS COMME JURY */}
       <section className="jury-experiences-section">
-        <div className="section-head">
-          <div>
-            <p className="kicker"><span /> Historique officiel</p>
-            <h2>Concours arbitrés en tant que jury</h2>
-          </div>
-        </div>
+        <SectionHead section={experiencesHead} />
 
         <div className="jury-table-list">
           {activeExperiences.map((exp) => (
             <article key={exp.id} className="jury-exp-row">
               <div className="exp-visual">
-                <img src={exp.image_url || images.table} alt={exp.event_name} />
+                <Picture src={exp.image_url} alt={exp.event_name} />
               </div>
               <div className="exp-content">
                 <div className="exp-tags">
@@ -151,12 +114,7 @@ export default function JuryPage({
       {/* TÉMOIGNAGES ORGANISATEURS */}
       {organizerTestimonials.length > 0 && (
         <section className="jury-testimonials-section">
-          <div className="section-head">
-            <div>
-              <p className="kicker"><span /> Confiance des comités</p>
-              <h2>Mots d’organisateurs</h2>
-            </div>
-          </div>
+          <SectionHead section={testimonialsHead} />
           <div className="testimonials-cards-grid">
             {organizerTestimonials.map((t) => (
               <div key={t.id} className="testimonial-box">
@@ -176,22 +134,22 @@ export default function JuryPage({
       )}
 
       {/* APPEL À COLLABORATION ORGANISATEURS */}
+      {cta.is_published && (
       <section className="jury-cta-banner">
         <div className="cta-box-content">
           <Award size={40} className="cta-icon" />
-          <h2>Organisateurs de concours & comités</h2>
-          <p>
-            Vous préparez une prochaine élection régionale ou nationale et recherchez un jury d’expérience, garant d’un arbitrage juste et respectueux des candidats ?
-          </p>
+          <h2>{rich(cta.title)}</h2>
+          {cta.content && <p>{cta.content}</p>}
           <button
             className="button button-dark"
-            onClick={() => onNavigate('/contact?motif=jury')}
+            onClick={() => onNavigate(cta.button_url || '/contact')}
           >
-            <span>Proposer une participation au jury</span>
+            <span>{cta.button_label}</span>
             <ArrowUpRight size={16} />
           </button>
         </div>
       </section>
+      )}
     </main>
   );
 }

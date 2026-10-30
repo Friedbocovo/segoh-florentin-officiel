@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { ArrowLeft, ArrowUpRight, Calendar, Share2, Tag } from 'lucide-react';
 import type { Article } from '@/types';
-import { images } from '@/lib/supabase';
+import Picture from '@/components/common/Picture';
 import { canonicalUrl, updateSEO } from '@/lib/seo';
 
 interface ArticleDetailPageProps {
@@ -16,9 +16,9 @@ export default function ArticleDetailPage({ slug, articles, onNavigate }: Articl
   useEffect(() => {
     if (article) {
       updateSEO({
-        title: article.seo_title || `${article.title} — Couronne & Toque`,
+        title: article.seo_title || `${article.title} — MC Florentin`,
         description: article.seo_description || article.summary,
-        ogImage: article.cover_image || images.portrait,
+        ogImage: article.cover_image || undefined,
         ogType: 'article',
         canonical: canonicalUrl(`/actualites/${article.slug}`),
       });
@@ -134,7 +134,7 @@ export default function ArticleDetailPage({ slug, articles, onNavigate }: Articl
                 onClick={() => onNavigate(`/actualites/${rel.slug}`)}
               >
                 <div className="news-thumb">
-                  <img src={rel.cover_image || images.portrait} alt={rel.title} />
+                  <Picture src={rel.cover_image} alt={rel.title} />
                   <span className="news-cat">{rel.category}</span>
                 </div>
                 <div className="news-card-body">

@@ -17,6 +17,8 @@ import type {
 } from '@/types';
 import { DEFAULT_CLOUDINARY_CLOUD_NAME, DEFAULT_CLOUDINARY_UPLOAD_PRESET } from '@/lib/cloudinary';
 import { DEFAULT_WHATSAPP_NUMBER } from '@/lib/whatsapp';
+import { isStockPhoto } from '@/lib/media';
+import { buildDefaultSections } from '@/lib/pageSections';
 
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL ?? '';
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY ?? '';
@@ -35,20 +37,10 @@ export const supabase = createClient(
   isSupabaseConfigured ? supabaseAnonKey : 'demo'
 );
 
-export const images = {
-  portrait: 'https://images.pexels.com/photos/32683223/pexels-photo-32683223.jpeg?auto=compress&cs=tinysrgb&h=1200&w=900',
-  stage: 'https://images.pexels.com/photos/20238956/pexels-photo-20238956.jpeg?auto=compress&cs=tinysrgb&h=900&w=1400',
-  dessert: 'https://images.pexels.com/photos/28561582/pexels-photo-28561582.jpeg?auto=compress&cs=tinysrgb&h=900&w=1400',
-  chef: 'https://images.pexels.com/photos/36430088/pexels-photo-36430088.jpeg?auto=compress&cs=tinysrgb&h=900&w=1400',
-  table: 'https://images.pexels.com/photos/34817106/pexels-photo-34817106.jpeg?auto=compress&cs=tinysrgb&h=900&w=1400',
-  candidate1: 'https://images.pexels.com/photos/1587009/pexels-photo-1587009.jpeg?auto=compress&cs=tinysrgb&h=800&w=600',
-  candidate2: 'https://images.pexels.com/photos/1043474/pexels-photo-1043474.jpeg?auto=compress&cs=tinysrgb&h=800&w=600',
-  candidate3: 'https://images.pexels.com/photos/1239291/pexels-photo-1239291.jpeg?auto=compress&cs=tinysrgb&h=800&w=600',
-};
 
 // Initial Seed Data (réaliste, soigné et entièrement personnalisable depuis l'admin)
 export const initialSettings: SiteSettings = {
-  site_name: 'Couronne & Toque',
+  site_name: 'MC Florentin',
   tagline: 'Coach Miss & Mister · Jury de Concours · Chef Cuisinier',
   contact_email: 'bonjour@couronne-toque.fr',
   contact_phone: '+33 6 12 34 56 78',
@@ -57,143 +49,25 @@ export const initialSettings: SiteSettings = {
   instagram_url: 'https://instagram.com/couronne_et_toque',
   facebook_url: 'https://facebook.com/couronne.toque',
   youtube_url: 'https://youtube.com/@couronnetoque',
-  default_title: 'Couronne & Toque — Révéler l’élégance, sur scène comme à table',
+  default_title: 'MC Florentin — Révéler l’élégance, sur scène comme à table',
   default_description: 'Coaching d’exception pour candidats aux concours de Miss & Mister, membre de jurys prestigieux et cuisine d’auteur.',
-  default_og_image: images.portrait,
+  default_og_image: '',
   accent_color: '#8A6630',
-  logo_url: '/logo.png',
-  legal_notice: 'Couronne & Toque © 2025. Tous droits réservés.',
+  logo_url: '',
+  legal_notice: 'MC Florentin © 2025. Tous droits réservés.',
   cloudinary_cloud_name: DEFAULT_CLOUDINARY_CLOUD_NAME,
   cloudinary_upload_preset: DEFAULT_CLOUDINARY_UPLOAD_PRESET,
 };
 
-export const initialSections: SiteSection[] = [
-  {
-    id: 'sec-hero',
-    page: 'home',
-    section_key: 'hero',
-    title: 'Révéler l’élégance, sur scène comme à table',
-    eyebrow: 'Coach Miss & Mister · Jury · Chef Cuisinier',
-    content: 'J’accompagne celles et ceux qui veulent entrer dans la lumière avec justesse, prestance et vérité. Une même exigence, du premier regard à la dernière assiette.',
-    image_url: images.portrait,
-    button_label: 'Découvrir mon parcours',
-    button_url: '/a-propos',
-    meta: { secondary_button_label: 'Me contacter', secondary_button_url: '/contact' },
-    sort_order: 1,
-    is_published: true,
-  },
-  {
-    id: 'sec-presentation',
-    page: 'home',
-    section_key: 'presentation',
-    title: 'Une présence qui s’affirme, une histoire qui se raconte',
-    eyebrow: 'Présentation rapide',
-    content: 'Depuis plusieurs années, j’unis la rigueur de la gastronomie d’auteur et l’art subtil de la scène. Mon rôle est de faire émerger la singularité de chaque personnalité, sans artifice inutile.',
-    image_url: null,
-    button_label: 'En savoir plus sur mon histoire',
-    button_url: '/a-propos',
-    meta: {},
-    sort_order: 2,
-    is_published: true,
-  },
-  {
-    id: 'sec-stats',
-    page: 'home',
-    section_key: 'stats',
-    title: 'Indicateurs vérifiés',
-    eyebrow: 'Chiffres clés',
-    content: '',
-    image_url: null,
-    button_label: '',
-    button_url: '',
-    meta: {
-      stats: [
-        { label: 'Concours coachés', value: '18+' },
-        { label: 'Candidats accompagnés', value: '45+' },
-        { label: 'Titres & écharpes remportés', value: '26' },
-        { label: 'Jurys arbitrés', value: '32' },
-        { label: 'Années d’expérience', value: '8 ans' },
-      ],
-    },
-    sort_order: 3,
-    is_published: true,
-  },
-  {
-    id: 'sec-cta',
-    page: 'home',
-    section_key: 'cta',
-    title: 'Prêt à écrire votre prochain moment d’exception ?',
-    eyebrow: 'Collaborations & Accompagnement',
-    content: 'Que vous prépariez un concours national, organisiez une élection de prestige ou souhaitiez une prestation culinaire mémorable, échangeons en toute bienveillance.',
-    image_url: null,
-    button_label: 'Prendre contact',
-    button_url: '/contact',
-    meta: {},
-    sort_order: 4,
-    is_published: true,
-  },
-  {
-    id: 'sec-about-bio',
-    page: 'about',
-    section_key: 'bio',
-    title: 'De la discipline du tablier à la précision du podium',
-    eyebrow: 'Histoire & Évolution',
-    content: 'Mon cheminement professionnel s’est construit autour d’une quête constante de perfection et d’humanité. Formé aux exigences de la grande cuisine, j’ai très vite compris que la maîtrise du geste et le contrôle du trac procèdent de la même vérité intérieure que l’entrée sur scène d’un candidat à un concours de beauté.',
-    image_url: images.stage,
-    button_label: '',
-    button_url: '',
-    meta: {},
-    sort_order: 1,
-    is_published: true,
-  },
-  {
-    id: 'sec-about-values',
-    page: 'about',
-    section_key: 'values',
-    title: 'Mes principes fondamentaux',
-    eyebrow: 'Valeurs professionnelles',
-    content: 'L’authenticité avant le stéréotype. L’écoute avant le jugement. La rigueur bienveillante dans chaque détail.',
-    image_url: null,
-    button_label: '',
-    button_url: '',
-    meta: {
-      values_list: [
-        { title: 'Authenticité', desc: 'Préserver l’identité profonde de chaque candidat, loin des stéréotypes impersonnels.' },
-        { title: 'Exigence & Précision', desc: 'Chaque pas, chaque intonation et chaque dressage méritent un soin d’horloger.' },
-        { title: 'Bienveillance & Écoute', desc: 'Un climat de confiance mutuelle indispensable pour libérer le potentiel.' },
-      ],
-    },
-    sort_order: 2,
-    is_published: true,
-  },
-  {
-    id: 'sec-about-distinctions',
-    page: 'about',
-    section_key: 'distinctions',
-    title: 'Engagements & Références',
-    eyebrow: 'Formations & Reconnaissances',
-    content: 'Certifié en préparation mentale et techniques d’expression orale. Diplômé en arts culinaires français.',
-    image_url: null,
-    button_label: '',
-    button_url: '',
-    meta: {
-      items: [
-        'Diplôme d’État des Métiers de Bouche & Gastronomie Française',
-        'Formation certifiante aux techniques de prise de parole et posture scénique',
-        'Présidence d’honneur de jurys régionaux Miss & Mister depuis 2019',
-      ],
-    },
-    sort_order: 3,
-    is_published: true,
-  },
-];
+// Sections de toutes les pages : définies dans le registre (src/lib/pageSections.ts)
+export const initialSections: SiteSection[] = buildDefaultSections();
 
 export const initialServices: CoachingService[] = [
   {
     id: 'srv-1',
     title: 'Préparation Globale Concours Miss & Mister',
     description: 'Un accompagnement complet et intensif couvrant la démarche, la posture scénique, le charisme et la gestion des émotions pour aborder la compétition avec sérénité.',
-    image_url: images.stage,
+    image_url: null,
     price_info: 'Sur devis personnalisé',
     duration_info: 'Formule intensive 6 séances ou suivi longue durée',
     button_label: 'Demander un entretien',
@@ -205,7 +79,7 @@ export const initialServices: CoachingService[] = [
     id: 'srv-2',
     title: 'Éloquence & Prise de Parole en Public',
     description: 'Maîtrise de la voix, gestion du stress face au micro, clarté du discours et impact des réponses lors de l’interview officielle du jury.',
-    image_url: images.portrait,
+    image_url: null,
     price_info: 'À partir de 160 € / séance',
     duration_info: 'Séances individuelles de 2 heures',
     button_label: 'Réserver ce module',
@@ -217,7 +91,7 @@ export const initialServices: CoachingService[] = [
     id: 'srv-3',
     title: 'Posture, Démarche & Présence Scénique',
     description: 'Travail du pas, maintien du corps, port de tête, aisance en robe de soirée ou costume officiel, et gestion du regard face à la caméra et au public.',
-    image_url: images.stage,
+    image_url: null,
     price_info: 'À partir de 180 € / séance',
     duration_info: 'Séances pratiques en studio',
     button_label: 'Découvrir la méthode',
@@ -229,7 +103,7 @@ export const initialServices: CoachingService[] = [
     id: 'srv-4',
     title: 'Simulation & Questions Pièges du Jury',
     description: 'Mises en situation réelles calquées sur les entretiens des comités officiels, analyse critique constructive et perfectionnement de la répartie.',
-    image_url: images.table,
+    image_url: null,
     price_info: 'Sur mesure',
     duration_info: 'Module intensif 1/2 journée',
     button_label: 'Me préparer',
@@ -316,7 +190,7 @@ export const initialJuryExperiences: JuryExperience[] = [
     organizer: 'Comité Miss Élégance France',
     role_title: 'Président du Jury',
     description: 'Évaluation des 14 candidates régionales sur l’expression orale, le défilé en tenue d’apparat et l’adéquation aux valeurs de l’élégance contemporaine.',
-    image_url: images.table,
+    image_url: null,
     sort_order: 1,
     is_published: true,
   },
@@ -330,7 +204,7 @@ export const initialJuryExperiences: JuryExperience[] = [
     organizer: 'Comité Officiel Mister France',
     role_title: 'Membre du Jury Officiel',
     description: 'Observation attentive du charisme, de l’aisance relationnelle, du projet personnel et de la tenue générale des finalistes masculins.',
-    image_url: images.stage,
+    image_url: null,
     sort_order: 2,
     is_published: true,
   },
@@ -344,7 +218,7 @@ export const initialJuryExperiences: JuryExperience[] = [
     organizer: 'Association Régionale pour la Promotion des Talents',
     role_title: 'Jury Scénique & Éloquence',
     description: 'Attribution du prix spécial du charisme et notation des discours de présentation.',
-    image_url: images.portrait,
+    image_url: null,
     sort_order: 3,
     is_published: true,
   },
@@ -391,7 +265,7 @@ export const initialCulinaryItems: CulinaryItem[] = [
     ingredients: 'Saint-Jacques de plongée, topinambour, beurre d’Isigny, sarrasin breton.',
     dietary_info: 'Sans gluten',
     price_info: 'Menu dégustation',
-    image_url: images.dessert,
+    image_url: null,
     sort_order: 1,
     is_published: true,
   },
@@ -404,7 +278,7 @@ export const initialCulinaryItems: CulinaryItem[] = [
     ingredients: 'Canette du Sud-Ouest, betteraves chioggia, miel d’acacia, poivre de Sichuan.',
     dietary_info: 'Produits locaux et raisonnés',
     price_info: 'Menu Prestige',
-    image_url: images.chef,
+    image_url: null,
     sort_order: 2,
     is_published: true,
   },
@@ -417,7 +291,7 @@ export const initialCulinaryItems: CulinaryItem[] = [
     ingredients: 'Chocolat Valrhona Manjari, kalamansi, beurre AOP, fleur de sel de Guérande.',
     dietary_info: 'Création signature',
     price_info: 'Inclus au menu',
-    image_url: images.dessert,
+    image_url: null,
     sort_order: 3,
     is_published: true,
   },
@@ -430,7 +304,7 @@ export const initialCulinaryItems: CulinaryItem[] = [
     ingredients: '',
     dietary_info: 'De 4 à 16 convives',
     price_info: 'À partir de 120 € / convive',
-    image_url: images.table,
+    image_url: null,
     sort_order: 4,
     is_published: true,
   },
@@ -443,7 +317,7 @@ export const initialCulinaryItems: CulinaryItem[] = [
     ingredients: '',
     dietary_info: 'De 20 à 150 convives',
     price_info: 'Sur devis personnalisé',
-    image_url: images.chef,
+    image_url: null,
     sort_order: 5,
     is_published: true,
   },
@@ -462,18 +336,18 @@ export const initialContests: Contest[] = [
     short_description: 'Préparation complète des 5 candidates sélectionnées pour la finale régionale.',
     long_description: 'Un programme intensif de 6 semaines axé sur la diction, le maintien corporel en robe de gala et la présence scénique sous les projecteurs. Les résultats ont confirmé l’efficacité d’une approche sur mesure respectueuse de chaque personnalité.',
     coach_role_description: 'Coach officiel en charge de la préparation scénique et des simulations orales devant jury.',
-    cover_image: images.stage,
+    cover_image: null,
     is_featured: true,
     sort_order: 1,
     is_published: true,
-    seo_title: 'Miss Élégance Régionale 2024 — Concours coaché par Couronne & Toque',
+    seo_title: 'Miss Élégance Régionale 2024 — Concours coaché par MC Florentin',
     seo_description: 'Découvrez l’accompagnement et les distinctions remportées par les candidates lors de l’édition 2024.',
     results: [
       {
         id: 'res-1',
         contest_id: 'cnt-1',
         candidate_name: 'Camille L.',
-        candidate_photo: images.candidate1,
+        candidate_photo: null,
         title_won: 'Miss Élégance Régionale 2024',
         category: 'Miss',
         rank_position: 1,
@@ -485,7 +359,7 @@ export const initialContests: Contest[] = [
         id: 'res-2',
         contest_id: 'cnt-1',
         candidate_name: 'Inès D.',
-        candidate_photo: images.candidate3,
+        candidate_photo: null,
         title_won: '1ère Dauphine Régionale',
         category: 'Dauphine',
         rank_position: 2,
@@ -507,18 +381,18 @@ export const initialContests: Contest[] = [
     short_description: 'Accompagnement sur le charisme masculin, le maintien en costume et l’aisance médiatique.',
     long_description: 'Ce programme a permis aux candidats d’affirmer leur singularité avec courtoisie et prestance. Un travail ciblé sur la posture et la clarté du discours.',
     coach_role_description: 'Conseiller en image scénique et entraîneur oratoire.',
-    cover_image: images.portrait,
+    cover_image: null,
     is_featured: true,
     sort_order: 2,
     is_published: true,
-    seo_title: 'Mister France Régional 2024 — Préparation officielle Couronne & Toque',
+    seo_title: 'Mister France Régional 2024 — Préparation officielle MC Florentin',
     seo_description: 'Résultats et distinctions des candidats masculins accompagnés en 2024.',
     results: [
       {
         id: 'res-3',
         contest_id: 'cnt-2',
         candidate_name: 'Julien B.',
-        candidate_photo: images.candidate2,
+        candidate_photo: null,
         title_won: 'Mister Régional 2024',
         category: 'Mister',
         rank_position: 1,
@@ -552,7 +426,7 @@ export const initialContests: Contest[] = [
     short_description: 'Préparation finale de 3 finalistes pour l’étape nationale.',
     long_description: 'Séances de perfectionnement avancées axées sur la gestion du regard face aux caméras de télévision et la maîtrise des temps de réponse impartis.',
     coach_role_description: 'Coach particulier des finalistes.',
-    cover_image: images.stage,
+    cover_image: null,
     is_featured: false,
     sort_order: 3,
     is_published: true,
@@ -563,7 +437,7 @@ export const initialContests: Contest[] = [
         id: 'res-5',
         contest_id: 'cnt-3',
         candidate_name: 'Chloé V.',
-        candidate_photo: images.candidate1,
+        candidate_photo: null,
         title_won: '2ème Dauphine Nationale',
         category: 'Dauphine',
         rank_position: 3,
@@ -595,12 +469,12 @@ Ne vous focalisez pas uniquement sur la personne qui a posé la question. Distri
 #### 3. Soyez vous-même, sans posture artificielle
 Un jury expérimenté décèle instantanément les réponses apprises par cœur. Privilégiez toujours une anecdote vécue ou une conviction sincère à une formule creuse.
     `,
-    cover_image: images.portrait,
+    cover_image: null,
     category: 'Conseils Coaching',
     published_at: '2025-01-15T10:00:00Z',
     is_published: true,
     is_featured: true,
-    seo_title: 'Comment réussir l’interview du jury de Miss & Mister — Couronne & Toque',
+    seo_title: 'Comment réussir l’interview du jury de Miss & Mister — MC Florentin',
     seo_description: 'Les précieux conseils d’un coach et membre de jury pour briller lors de l’entretien officiel.',
   },
   {
@@ -617,12 +491,12 @@ En cuisine, quelques secondes de trop sur une cuisson ou un grain de sel en exc�
 
 Dans mes deux métiers, j'applique la même exigence : respecter la matière première. Qu'il s'agisse d'un produit brut d'exception ou de la personnalité singulière d'un candidat, mon rôle est de sublimer sans dénaturer.
     `,
-    cover_image: images.chef,
+    cover_image: null,
     category: 'Philosophie & Vision',
     published_at: '2025-02-02T14:30:00Z',
     is_published: true,
     is_featured: false,
-    seo_title: 'Cuisine et Coaching : la signature Couronne & Toque',
+    seo_title: 'Cuisine et Coaching : la signature MC Florentin',
     seo_description: 'Découvrez la philosophie commune unissant gastronomie d’auteur et présence scénique.',
   },
   {
@@ -635,7 +509,7 @@ Dans mes deux métiers, j'applique la même exigence : respecter la matière pre
 
 Le port de tête, l'alignement du bassin et le relâchement des trapèzes constituent le socle de toute prestance. Au cours de nos séances de coaching, nous déconstruisons les réflexes de protection inconscients pour vous redonner une verticalité naturelle et souveraine.
     `,
-    cover_image: images.stage,
+    cover_image: null,
     category: 'Pratique Scénique',
     published_at: '2025-02-18T09:00:00Z',
     is_published: true,
@@ -650,7 +524,7 @@ export const initialTestimonials: Testimonial[] = [
     id: 'tst-1',
     author_name: 'Camille L.',
     author_role: 'Miss Élégance Régionale 2024',
-    avatar_url: images.candidate1,
+    avatar_url: null,
     message: 'Ce coaching a complètement transformé ma perception de moi-même. Grâce à sa bienveillance et à son exigence chirurgicale, je suis montée sur scène avec une paix intérieure que je n’avais jamais connue.',
     domain: 'coaching',
     rating: 5,
@@ -686,7 +560,7 @@ export const initialTestimonials: Testimonial[] = [
     id: 'tst-4',
     author_name: 'Julien B.',
     author_role: 'Mister Régional 2024',
-    avatar_url: images.candidate2,
+    avatar_url: null,
     message: 'Le travail sur la prise de parole a été le tournant décisif de ma préparation. Il a su corriger mes tics de langage et m’apprendre à poser ma voix avec autorité et douceur.',
     domain: 'coaching',
     rating: 5,
@@ -696,80 +570,8 @@ export const initialTestimonials: Testimonial[] = [
   },
 ];
 
-export const initialMedia: MediaItem[] = [
-  {
-    id: 'med-1',
-    title: 'Portrait officiel studio',
-    media_type: 'image',
-    url: images.portrait,
-    thumbnail_url: images.portrait,
-    alt_text: 'Portrait éditorial du coach et chef',
-    caption: 'L’exigence et la précision réunies.',
-    category: 'coaching',
-    sort_order: 1,
-    is_published: true,
-  },
-  {
-    id: 'med-2',
-    title: 'Défilé final sous les projecteurs',
-    media_type: 'image',
-    url: images.stage,
-    thumbnail_url: images.stage,
-    alt_text: 'Scène de concours avec candidats',
-    caption: 'La consécration de semaines de travail minutieux.',
-    category: 'concours',
-    sort_order: 2,
-    is_published: true,
-  },
-  {
-    id: 'med-3',
-    title: 'Dressage d’assiette gastronomique',
-    media_type: 'image',
-    url: images.dessert,
-    thumbnail_url: images.dessert,
-    alt_text: 'Dressage d’un dessert haute couture',
-    caption: 'La gourmandise comme expression artistique.',
-    category: 'gastronomie',
-    sort_order: 3,
-    is_published: true,
-  },
-  {
-    id: 'med-4',
-    title: 'Le geste culinaire en cuisine',
-    media_type: 'image',
-    url: images.chef,
-    thumbnail_url: images.chef,
-    alt_text: 'Chef au travail dans sa cuisine',
-    caption: 'Rigueur et concentration avant le coup de feu.',
-    category: 'gastronomie',
-    sort_order: 4,
-    is_published: true,
-  },
-  {
-    id: 'med-5',
-    title: 'Table d’honneur du jury',
-    media_type: 'image',
-    url: images.table,
-    thumbnail_url: images.table,
-    alt_text: 'Table d’arbitrage d’un concours de beauté',
-    caption: 'Un regard bienveillant et impartial.',
-    category: 'jury',
-    sort_order: 5,
-    is_published: true,
-  },
-  {
-    id: 'med-6',
-    title: 'Lauréate régionale et écharpe',
-    media_type: 'image',
-    url: images.candidate1,
-    thumbnail_url: images.candidate1,
-    alt_text: 'Candidate récompensée après le sacre',
-    caption: 'L’émotion d’une victoire méritée.',
-    category: 'concours',
-    sort_order: 6,
-    is_published: true,
-  },
-];
+// Aucune photo d’exemple : la médiathèque se remplit avec vos propres téléversements.
+export const initialMedia: MediaItem[] = [];
 
 export const initialMessages: ContactMessage[] = [
   {
@@ -944,6 +746,13 @@ export const DataService = {
       try {
         const { data, error } = await supabase.from('site_settings').select('*').limit(1).maybeSingle();
         if (!error && data) {
+          // Ancien nom de marque encore enregistré en base : remplacé par le nouveau
+          for (const [key, value] of Object.entries(data)) {
+            if (typeof value === 'string' && value.includes('Couronne & Toque')) {
+              data[key] = value.split('Couronne & Toque').join('MC Florentin');
+            }
+            if (typeof value === 'string' && value.includes('pexels.com')) data[key] = '';
+          }
           return {
             ...initialSettings,
             ...data,
@@ -973,10 +782,19 @@ export const DataService = {
   },
 
   // SECTIONS
+  /**
+   * Sections des pages Accueil / À propos. Les sections prévues mais pas encore
+   * enregistrées en base sont complétées par leur version par défaut (id non UUID) :
+   * le site les affiche et l'admin peut les modifier, ce qui les crée en base.
+   */
   async getSections(): Promise<SiteSection[]> {
-    return readTable('sections', initialSections, () =>
+    const stored = await readTable<SiteSection>('sections', initialSections, () =>
       supabase.from('site_sections').select('*').order('sort_order')
     );
+    const missing = initialSections.filter(
+      (def) => !stored.some((s) => s.page === def.page && s.section_key === def.section_key)
+    );
+    return sortRows([...stored, ...missing]);
   },
   async saveSection(sec: SiteSection): Promise<SiteSection[]> {
     return saveRow('site_sections', 'sections', sec, () => this.getSections());
@@ -1171,9 +989,10 @@ export const DataService = {
 
   // MEDIA LIBRARY
   async getMedia(): Promise<MediaItem[]> {
-    return readTable('media', initialMedia, () =>
+    const media = await readTable<MediaItem>('media', initialMedia, () =>
       supabase.from('media_library').select('*').order('sort_order')
     );
+    return media.filter((m) => !isStockPhoto(m.url));
   },
   async saveMedia(item: MediaItem): Promise<MediaItem[]> {
     return saveRow('media_library', 'media', item, () => this.getMedia());
@@ -1269,6 +1088,8 @@ export const DataService = {
       (c.results ?? []).map((r) => ({ ...r, id: newId(), contest_id: contestIds.get(c.id)! }))
     );
 
+    // Les résultats ne sont importés que si les concours de démonstration l'ont été
+    let skippedContests = true;
     const batches: [string, object[]][] = [
       ['site_sections', withNewIds(initialSections)],
       ['coaching_services', withNewIds(initialServices)],
@@ -1286,7 +1107,19 @@ export const DataService = {
 
     for (const [table, rows] of batches) {
       if (rows.length === 0) continue;
-      const { error } = await supabase.from(table).insert(rows.map((r) => toRow(r)));
+      // Ne jamais dupliquer : une table qui contient déjà des données est laissée telle quelle
+      const { count, error: countError } = await supabase.from(table).select('id', { count: 'exact', head: true });
+      if (countError) throw new DataServiceError(`Import de « ${table} » impossible`, countError.message);
+      if ((count ?? 0) > 0) continue;
+      if (table === 'contest_results' && skippedContests) continue;
+      if (table === 'contests') skippedContests = false;
+      const prepared = rows.map((r) => {
+        const row = toRow(r);
+        // Concours de démonstration non importés : pas de lien vers eux
+        if (skippedContests && 'contest_id' in row) row.contest_id = null;
+        return row;
+      });
+      const { error } = await supabase.from(table).insert(prepared);
       if (error) throw new DataServiceError(`Import de « ${table} » impossible`, error.message);
     }
   },

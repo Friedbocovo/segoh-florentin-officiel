@@ -5,6 +5,7 @@ import {
 import { useState } from 'react';
 import type { Article, ContactMessage, Contest, MediaItem, Testimonial } from '@/types';
 import type { AdminTab } from './AdminLayout';
+import Picture from '@/components/common/Picture';
 
 interface AdminDashboardProps {
   contests: Contest[];
@@ -29,7 +30,7 @@ export default function AdminDashboard({
   onImportDemo,
 }: AdminDashboardProps) {
   const [importing, setImporting] = useState(false);
-  const isDatabaseEmpty = contests.length === 0 && articles.length === 0 && media.length === 0;
+  const isDatabaseEmpty = contests.length === 0 && articles.length === 0;
 
   async function handleImportDemo() {
     if (!onImportDemo) return;
@@ -75,7 +76,7 @@ export default function AdminDashboard({
       {onImportDemo && isDatabaseEmpty && (
         <div className="admin-flash-banner">
           <Database size={16} />
-          <span>La base de données est vide. Vous pouvez partir du contenu de démonstration et le modifier ensuite.</span>
+          <span>Aucun concours ni article en base. Vous pouvez importer le contenu de démonstration (seules les rubriques encore vides sont remplies), puis le modifier.</span>
           <button className="button button-dark" onClick={handleImportDemo} disabled={importing}>
             {importing ? <LoaderCircle className="spin" size={15} /> : <Plus size={15} />}
             <span>{importing ? 'Import…' : 'Importer'}</span>
@@ -222,7 +223,7 @@ export default function AdminDashboard({
                   onClick={() => onNavigateTab('contests')}
                 >
                   <div className="contest-thumb-mini">
-                    <img src={c.cover_image || '/logo.png'} alt="" />
+                    <Picture src={c.cover_image} alt="" />
                   </div>
                   <div className="contest-row-info">
                     <span className="contest-tag">{c.edition} · {c.location}</span>

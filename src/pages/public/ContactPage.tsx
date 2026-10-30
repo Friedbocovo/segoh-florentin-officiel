@@ -1,15 +1,19 @@
 import { FormEvent, useEffect, useState } from 'react';
 import { CheckCircle2, Facebook, Instagram, LoaderCircle, Mail, MapPin, MessageCircle, Phone, RotateCcw, Send, ShieldCheck, Youtube } from 'lucide-react';
-import type { SiteSettings } from '@/types';
+import type { SiteSection, SiteSettings } from '@/types';
+import { getSection } from '@/lib/pageSections';
+import { rich } from '@/lib/richText';
 import { DataService } from '@/lib/supabase';
 import { buildContactWhatsAppUrl, normalizeWhatsAppNumber } from '@/lib/whatsapp';
 
 interface ContactPageProps {
   settings: SiteSettings;
+  sections: SiteSection[];
   prefilledPurpose?: string;
 }
 
-export default function ContactPage({ settings, prefilledPurpose }: ContactPageProps) {
+export default function ContactPage({ settings, sections, prefilledPurpose }: ContactPageProps) {
+  const intro = getSection(sections, 'contact', 'intro');
   const [purpose, setPurpose] = useState(prefilledPurpose || 'coaching');
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
@@ -59,11 +63,9 @@ export default function ContactPage({ settings, prefilledPurpose }: ContactPageP
       <div className="contact-page-grid">
         {/* COLONNE GAUCHE : COORDONNÉES ET PRÉSENTATION */}
         <div className="contact-info-col">
-          <p className="kicker"><span /> Le premier pas</p>
-          <h1>Faisons de votre projet un moment d’exception</h1>
-          <p className="contact-lead-text">
-            Une candidature à un concours, une élection à arbitrer ou un dîner gastronomique privé à concevoir ? Écrivez-moi, je vous répondrai personnellement sous 48 heures.
-          </p>
+          {intro.eyebrow && <p className="kicker"><span /> {intro.eyebrow}</p>}
+          <h1>{rich(intro.title)}</h1>
+          {intro.content && <p className="contact-lead-text">{intro.content}</p>}
 
           <div className="contact-meta-cards">
             <div className="contact-meta-item">

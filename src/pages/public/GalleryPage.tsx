@@ -1,8 +1,13 @@
 import { useMemo, useState } from 'react';
 import { Image as ImageIcon, Play, Sparkles, Video } from 'lucide-react';
-import type { MediaItem } from '@/types';
+import type { SiteSection, MediaItem } from '@/types';
+import { PageHeading, SectionHead } from '@/components/common/SectionTitles';
+import EditorialIntro from '@/components/common/EditorialIntro';
+import { getSection } from '@/lib/pageSections';
+import { rich } from '@/lib/richText';
 
 interface GalleryPageProps {
+  sections: SiteSection[];
   media: MediaItem[];
   onOpenMedia: (item: MediaItem, all: MediaItem[]) => void;
 }
@@ -15,7 +20,7 @@ const categories = [
   { id: 'concours', label: 'Événements & Podiums' },
 ];
 
-export default function GalleryPage({ media, onOpenMedia }: GalleryPageProps) {
+export default function GalleryPage({ sections, media, onOpenMedia }: GalleryPageProps) {
   const [selectedCat, setSelectedCat] = useState('all');
 
   const filteredMedia = useMemo(() => {
@@ -25,17 +30,11 @@ export default function GalleryPage({ media, onOpenMedia }: GalleryPageProps) {
       .sort((a, b) => a.sort_order - b.sort_order);
   }, [media, selectedCat]);
 
+  const heading = getSection(sections, 'gallery', 'heading');
+
   return (
     <main className="subpage wrap gallery-page">
-      <div className="page-heading">
-        <div>
-          <p className="kicker"><span /> Portfolio Visuel & Coulisses</p>
-          <h1>Galerie Photographique & Vidéo</h1>
-        </div>
-        <p className="heading-note">
-          De la concentration en loges au dressage minutieux en cuisine, revivez les moments d’exception en images.
-        </p>
-      </div>
+      {heading.is_published && <PageHeading section={heading} />}
 
       {/* FILTRES CATÉGORIES */}
       <div className="gallery-filters-bar">

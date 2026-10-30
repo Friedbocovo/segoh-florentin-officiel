@@ -73,8 +73,8 @@ export default function AdminSettings({
               folder="couronne-toque/branding"
               settings={form}
               onChange={({ url }) => setForm({ ...form, logo_url: url })}
-              onRemove={() => setForm({ ...form, logo_url: '/logo.png' })}
-              helpText="Ce logo s'affiche dans l'en-tête, le pied de page et l'administration."
+              onRemove={() => setForm({ ...form, logo_url: '' })}
+              helpText="Ce logo s'affiche dans l'en-tête, le pied de page et l'administration. Laissez vide (ou /logo.png) pour utiliser le monogramme « MC »."
             />
           </div>
         </div>

@@ -419,6 +419,7 @@ export default function App() {
 
       {route.pathname === '/a-propos' && (
         <AboutPage
+          media={media}
           settings={settings}
           sections={sections}
           onNavigate={navigate}
@@ -427,6 +428,7 @@ export default function App() {
 
       {route.pathname === '/coaching' && (
         <CoachingPage
+          sections={sections}
           services={services}
           methodSteps={methodSteps}
           faqs={faqs}
@@ -440,6 +442,7 @@ export default function App() {
 
       {route.pathname === '/jury' && (
         <JuryPage
+          sections={sections}
           experiences={juryExperiences}
           criteria={juryCriteria}
           testimonials={testimonials}
@@ -451,6 +454,7 @@ export default function App() {
 
       {route.pathname === '/gastronomie' && (
         <GastronomyPage
+          sections={sections}
           items={culinaryItems}
           media={media}
           testimonials={testimonials}
@@ -462,6 +466,7 @@ export default function App() {
 
       {route.pathname === '/mes-concours' && (
         <ContestsPage
+          sections={sections}
           contests={contests}
           onNavigate={navigate}
         />
@@ -469,6 +474,7 @@ export default function App() {
 
       {route.pathname.startsWith('/mes-concours/') && route.params.slug && (
         <ContestDetailPage
+          sections={sections}
           slug={route.params.slug}
           contests={contests}
           media={media}
@@ -479,6 +485,7 @@ export default function App() {
 
       {route.pathname === '/galerie' && (
         <GalleryPage
+          sections={sections}
           media={media}
           onOpenMedia={handleOpenLightbox}
         />
@@ -486,12 +493,15 @@ export default function App() {
 
       {route.pathname === '/temoignages' && (
         <TestimonialsPage
+          sections={sections}
           testimonials={testimonials}
+          settings={settings}
         />
       )}
 
       {route.pathname === '/actualites' && (
         <NewsPage
+          sections={sections}
           articles={articles}
           onNavigate={navigate}
         />
@@ -507,6 +517,7 @@ export default function App() {
 
       {route.pathname === '/contact' && (
         <ContactPage
+          sections={sections}
           settings={settings}
           prefilledPurpose={route.query.motif}
         />
@@ -514,6 +525,7 @@ export default function App() {
 
       {route.pathname === '/mentions-legales' && (
         <LegalPage
+          sections={sections}
           settings={settings}
         />
       )}
