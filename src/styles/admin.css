@@ -1828,3 +1828,104 @@ label .cloudinary-help-text {
 .subtabs-bar {
   column-gap: 20px;
 }
+
+/* --------------------------------------------------------------------------
+   MÉDIATHÈQUE — IMPORT GROUPÉ
+   -------------------------------------------------------------------------- */
+.admin-header-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.bulk-summary {
+  display: flex;
+  justify-content: space-between;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.bulk-file-list {
+  display: grid;
+  max-height: 340px;
+  overflow-y: auto;
+  border: 1px solid var(--line);
+  background: var(--surface);
+}
+
+.bulk-file {
+  display: grid;
+  grid-template-columns: 52px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 14px;
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--line);
+}
+
+.bulk-file:last-child {
+  border-bottom: 0;
+}
+
+.bulk-thumb {
+  display: grid;
+  place-items: center;
+  width: 52px;
+  height: 52px;
+  overflow: hidden;
+  background: var(--paper-deep);
+  color: var(--muted);
+}
+
+.bulk-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.bulk-info {
+  display: grid;
+  gap: 6px;
+  min-width: 0;
+}
+
+.bulk-info strong {
+  overflow: hidden;
+  font-size: 14px;
+  font-weight: 500;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.bulk-info small {
+  font-size: 12.5px;
+  color: var(--muted);
+}
+
+.bulk-info .cloudinary-progress-bar-wrap {
+  display: block;
+}
+
+.bulk-info .cloudinary-progress-bar-fill {
+  display: block;
+}
+
+.bulk-state {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12.5px;
+  color: var(--muted);
+}
+
+.bulk-file.is-done .bulk-state,
+.bulk-file.is-done .bulk-info small {
+  color: var(--success);
+}
+
+.bulk-file.is-error .bulk-state,
+.bulk-file.is-error .bulk-info small {
+  color: var(--danger);
+}
