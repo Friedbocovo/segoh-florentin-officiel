@@ -20,8 +20,16 @@ const dist = join(root, 'dist');
 const env = loadEnv(process.env.NODE_ENV === 'development' ? 'development' : 'production', root, 'VITE_');
 
 const siteUrl = (env.VITE_SITE_URL || '').replace(/\/+$/, '');
-const supabaseUrl = env.VITE_SUPABASE_URL || '';
-const supabaseKey = env.VITE_SUPABASE_ANON_KEY || '';
+// Mêmes noms de secours que vite.config.ts (variables créées par l'intégration Supabase de Vercel)
+const pe = process.env;
+const supabaseUrl = env.VITE_SUPABASE_URL || pe.NEXT_PUBLIC_SUPABASE_URL || pe.SUPABASE_URL || '';
+const supabaseKey =
+  env.VITE_SUPABASE_ANON_KEY ||
+  pe.NEXT_PUBLIC_SUPABASE_ANON_KEY ||
+  pe.SUPABASE_ANON_KEY ||
+  pe.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY ||
+  pe.SUPABASE_PUBLISHABLE_KEY ||
+  '';
 const supabaseReady = Boolean(supabaseUrl && supabaseKey && !supabaseUrl.includes('votre-projet'));
 
 const pageMeta = JSON.parse(await readFile(join(root, 'src/lib/pageMeta.json'), 'utf8'));

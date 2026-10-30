@@ -3584,18 +3584,6 @@ main + .site-footer {
   font-style: italic;
 }
 
-.admin-access-link {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  color: var(--on-night-muted);
-  transition: color 0.3s var(--ease);
-}
-
-.admin-access-link:hover {
-  color: var(--on-night);
-}
-
 @media (max-width: 1024px) {
   .footer-grid {
     grid-template-columns: 1fr 1fr;

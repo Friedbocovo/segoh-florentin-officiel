@@ -1,4 +1,4 @@
-import { ArrowUpRight, CircleUserRound, Facebook, Instagram, Mail, MapPin, MessageCircle, Phone, Youtube } from 'lucide-react';
+import { ArrowUpRight, Facebook, Instagram, Mail, MapPin, MessageCircle, Phone, Youtube } from 'lucide-react';
 import type { SiteSettings } from '@/types';
 import { normalizeWhatsAppNumber } from '@/lib/whatsapp';
 import BrandMark from '@/components/common/BrandMark';
@@ -101,10 +101,6 @@ export default function Footer({ settings, onNavigate }: FooterProps) {
       <div className="wrap footer-bottom">
         <span>© {new Date().getFullYear()} {settings.site_name}. Tous droits réservés.</span>
         <span>Une maison d’exigence, d’allure et de goût</span>
-        <button onClick={() => onNavigate('/admin')} className="admin-access-link" aria-label="Accès espace privé">
-          <CircleUserRound size={14} />
-          <span>Espace privé</span>
-        </button>
       </div>
     </footer>
   );
